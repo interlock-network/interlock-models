@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import plotly
+import plotly.express as px
 import random
 from cadCAD.configuration.utils import bound_norm_random, config_sim, time_step, env_trigger
 from cadCAD.configuration import Experiment
@@ -217,6 +219,38 @@ def data_value_updates_token_reward_to_held_rate (ctx, s):
     data_value = ctx.get ("data-value")
     new_val = get_new_value (s, "data-value")
     append_each (data_value, new_val)
+
+def token_reward_to_supply_rate_updates_airlock_adoption_rate (ctx, s):
+    if ctx.get ("rewards-supply") == None:
+        ctx ["rewards-supply"] = []
+    
+    rewards_supply = ctx.get ("rewards-supply")
+    new_val = div_ls (get_new_value (s, "token-reward-to-supply-rate") + get_new_value (s, "airlock-users"))
+    append_each (rewards_supply, new_val)
+
+def token_reward_to_held_rate_updates_airlock_adoption_rate (ctx, s):
+    if ctx.get ("rewards-held") == None:
+        ctx ["rewards-held"] = []
+    
+    rewards_held = ctx.get ("rewards-held")
+    new_val = div_ls (get_new_value (s, "token-reward-to-held-rate") + get_new_value (s, "airlock-users"))
+    append_each (rewards_held, new_val)
+
+def token_reward_to_supply_rate_updates_airlock_abandonment_rate (ctx, s):
+    if ctx.get ("rewards-supply") == None:
+        ctx ["rewards-supply"] = []
+    
+    rewards_supply = ctx.get ("rewards-supply")
+    new_val = div_ls (get_old_value (s, "token-reward-to-supply-rate") + get_new_value (s, "token-reward-to-supply-rate"))
+    append_each (rewards_supply, new_val)
+
+def token_reward_to_held_rate_updates_airlock_abandonment_rate (ctx, s):
+    if ctx.get ("rewards-held") == None:
+        ctx ["rewards-held"] = []
+    
+    rewards_held = ctx.get ("rewards-held")
+    new_val = div_ls (get_old_value (s, "token-reward-to-held-rate") + get_new_value (s, "token-reward-to-held-rate"))
+    append_each (rewards_held, new_val)
 
 def commit_token_reward_to_supply_rate (_params, substep, sH, s, _input, **kwargs):
     adjusted_flows = s.get ("flow-adjustments")
@@ -818,7 +852,7 @@ def heuristic_contradictions_updates_heuristic_innovation (ctx, s):
         ctx ["urgency"] = []
     
     urgency = ctx.get ("urgency")
-    new_val = div_ls (get_new_value (s, "heuristic-contradictions") + get_old_value (s, "heuristic-contradictions"))
+    new_val = get_new_value (s, "heuristic-contradictions")
     append_each (urgency, new_val)
 
 def heuristic_innovation_updates_heuristic_contradictions (ctx, s):
@@ -1082,6 +1116,27 @@ def update_state (s, name, val):
     return val, s.get (name) [0]
 
 
+def tuple_to_value (x):
+    if isinstance (x, tuple):
+        if isinstance (x [0], list):
+            return x [0] [0]
+        
+    
+    return x
+
+
+def show_columns ():
+    ret = list (sim_res.columns)
+    ret.sort ()
+    return ret
+
+
+def plot_lines (data, x_vars, y_vars):
+    fig = px.line (data, x=x_vars, y=y_vars, facet_row='simulation', facet_col='run', height=800, template='seaborn')
+    fig.update_layout (margin=dict(l=20, r=20, t=20, b=20),)
+    return fig
+
+
 def adjust_all_flows (_params, substep, sH, s, _input, **kwargs):
     flow_adjustments = {}
     adjust_scam_profits_outflow (s, flow_adjustments)
@@ -1123,26 +1178,26 @@ def update_scammer_innovation (_params, substep, sH, s, _input, **kwargs):
 
 def update_scam_profits_per_page (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    scam_profits_per_page = [random.randrange (1, 100)]
+    scam_profits_per_page = min_ls ([100] + max_ls ([1] + [random.randrange (1, 100)]))
     return "scam-profits-per-page", update_state (s, "scam-profits-per-page", scam_profits_per_page)
 
 
 def update_stake_yield (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    stake_yield = choose_distro ([(1, 0.01), (1, 0.02)])
+    stake_yield = min_ls ([0.02] + max_ls ([0.01] + choose_distro ([(1, 0.01), (1, 0.02)])))
     return "stake-yield", update_state (s, "stake-yield", stake_yield)
 
 
 def update_max_total_stake_per_entity (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    max_total_stake_per_entity = [random.randrange (100, 500)]
+    max_total_stake_per_entity = min_ls ([500] + max_ls ([100] + [random.randrange (100, 500)]))
     return "max-total-stake-per-entity", update_state (s, "max-total-stake-per-entity", max_total_stake_per_entity)
 
 
 def update_staking_opportunities (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     grey_area_entities_updates_staking_opportunities (ctx, s)
-    staking_opportunities = ctx.get ("grey-stake")
+    staking_opportunities = min_ls ([3000000000000] + max_ls ([0] + ctx.get ("grey-stake")))
     return "staking-opportunities", update_state (s, "staking-opportunities", staking_opportunities)
 
 
@@ -1150,39 +1205,39 @@ def update_heuristic_contradictions (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     heuristic_innovation_updates_heuristic_contradictions (ctx, s)
     scammer_innovation_updates_heuristic_contradictions (ctx, s)
-    heuristic_contradictions = sum_ls (ctx.get ("innovation"))
+    heuristic_contradictions = min_ls ([100] + max_ls ([0] + max_ls ([random.randrange (5, 15)] + sum_ls (ctx.get ("innovation")))))
     return "heuristic-contradictions", update_state (s, "heuristic-contradictions", heuristic_contradictions)
 
 
 def update_data_value (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    data_value = div_ls ([random.randrange (100, 600)] + [1000])
+    data_value = min_ls (div_ls ([600] + [1000]) + max_ls (div_ls ([100] + [1000]) + div_ls ([random.randrange (100, 600)] + [1000])))
     return "data-value", update_state (s, "data-value", data_value)
 
 
 def update_staking_enthusiasm (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    staking_enthusiasm = div_ls ([random.randrange (1, 25)] + [100])
+    staking_enthusiasm = min_ls ([100] + max_ls ([0] + div_ls ([random.randrange (1, 25)] + [100])))
     return "staking-enthusiasm", update_state (s, "staking-enthusiasm", staking_enthusiasm)
 
 
 def update_money_growth_rate (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    money_growth_rate = choose_distro ([(1, 0.988), (2, 0.991), (2, 0.992), (5, 0.993), (7, 0.994), (10, 0.995), (38, 0.997), (80, 0.998), (124, 0.999), (145, 1.0), (127, 1.001), (105, 1.002), (68, 1.003), (35, 1.004), (27, 1.005), (29, 1.006), (12, 1.007), (4, 1.008), (2, 1.009), (3, 1.01), (1, 1.017)])
+    money_growth_rate = min_ls (div_ls ([1017] + [1000]) + max_ls (div_ls ([988] + [1000]) + choose_distro ([(1, 0.988), (2, 0.991), (2, 0.992), (5, 0.993), (7, 0.994), (10, 0.995), (38, 0.997), (80, 0.998), (124, 0.999), (145, 1.0), (127, 1.001), (105, 1.002), (68, 1.003), (35, 1.004), (27, 1.005), (29, 1.006), (12, 1.007), (4, 1.008), (2, 1.009), (3, 1.01), (1, 1.017)])))
     return "money-growth-rate", update_state (s, "money-growth-rate", money_growth_rate)
 
 
 def update_crypto_hype (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     money_supply_updates_crypto_hype (ctx, s)
-    crypto_hype = mul_ls (sum_ls (mul_ls ([0.15] + choose_distro ([(1, -1), (1, 1)])) + [1]) + get_new_value (s, "crypto-hype") + ctx.get ("extra-cash-growth"))
+    crypto_hype = min_ls ([100] + max_ls ([1] + mul_ls (get_new_value (s, "crypto-hype") + ctx.get ("extra-cash-growth"))))
     return "crypto-hype", update_state (s, "crypto-hype", crypto_hype)
 
 
 def update_interlock_hype (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     crypto_hype_updates_interlock_hype (ctx, s)
-    interlock_hype = mul_ls (get_new_value (s, "interlock-hype") + ctx.get ("crypto-hype-growth"))
+    interlock_hype = min_ls ([100] + max_ls ([1] + mul_ls (get_new_value (s, "interlock-hype") + ctx.get ("crypto-hype-growth") + choose_distro ([(1, 1.1), (1, 1.5), (1, 2), (3, 1.05), (6, 1.01)]))))
     return "interlock-hype", update_state (s, "interlock-hype", interlock_hype)
 
 
@@ -1196,7 +1251,7 @@ def update_token_profit (_params, substep, sH, s, _input, **kwargs):
 def update_airlock_lookup_price (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     token_price_updates_airlock_lookup_price (ctx, s)
-    airlock_lookup_price = div_ls (get_new_value (s, "airlock-lookup-price") + ctx.get ("price-delta-pct"))
+    airlock_lookup_price = min_ls ([50] + max_ls ([1] + div_ls (get_new_value (s, "airlock-lookup-price") + ctx.get ("price-delta-pct"))))
     return "airlock-lookup-price", update_state (s, "airlock-lookup-price", airlock_lookup_price)
 
 
@@ -1204,7 +1259,7 @@ def update_token_price (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     token_supply_updates_token_price (ctx, s)
     intr_investments_updates_token_price (ctx, s)
-    token_price = mul_ls (get_new_value (s, "token-price") + ctx.get ("invest-price-growth") + ctx.get ("supply-price-growth"))
+    token_price = min_ls ([200000] + max_ls ([0.01] + mul_ls (get_new_value (s, "token-price") + ctx.get ("supply-price-growth"))))
     return "token-price", update_state (s, "token-price", token_price)
 
 
@@ -1233,7 +1288,7 @@ def update_scam_page_success_rate (_params, substep, sH, s, _input, **kwargs):
 
 def update_scam_page_visit_rate (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    scam_page_visit_rate = mul_ls ([0.2] + get_new_value (s, "page-visits"))
+    scam_page_visit_rate = mul_ls ([1] + [1000000])
     return "scam-page-visit-rate", update_state (s, "scam-page-visit-rate", scam_page_visit_rate)
 
 
@@ -1253,7 +1308,7 @@ def update_airlock_share_rate (_params, substep, sH, s, _input, **kwargs):
 
 def update_resolution_rate (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    resolution_rate = get_new_value (s, "resolution-rate")
+    resolution_rate = get_old_value (s, "grey-area-entity-rate")
     return "resolution-rate", update_state (s, "resolution-rate", resolution_rate)
 
 
@@ -1273,15 +1328,19 @@ def update_airlock_lookup_rate (_params, substep, sH, s, _input, **kwargs):
 
 def update_airlock_abandonment_rate (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
+    token_reward_to_held_rate_updates_airlock_abandonment_rate (ctx, s)
+    token_reward_to_supply_rate_updates_airlock_abandonment_rate (ctx, s)
     heuristic_contradictions_updates_airlock_abandonment_rate (ctx, s)
-    airlock_abandonment_rate = mul_ls (ctx.get ("contradiction-delta") + get_new_value (s, "airlock-abandonment-rate"))
+    airlock_abandonment_rate = mul_ls (ctx.get ("contradiction-delta") + get_new_value (s, "airlock-abandonment-rate") + div_ls (sum_ls (ctx.get ("rewards-supply") + ctx.get ("rewards-held")) + [2]))
     return "airlock-abandonment-rate", update_state (s, "airlock-abandonment-rate", airlock_abandonment_rate)
 
 
 def update_airlock_adoption_rate (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
+    token_reward_to_held_rate_updates_airlock_adoption_rate (ctx, s)
+    token_reward_to_supply_rate_updates_airlock_adoption_rate (ctx, s)
     interlock_hype_updates_airlock_adoption_rate (ctx, s)
-    airlock_adoption_rate = mul_ls (ctx.get ("crypto-hype-growth") + get_new_value (s, "airlock-adoption-rate"))
+    airlock_adoption_rate = mul_ls (ctx.get ("crypto-hype-growth") + max_ls ([20] + get_new_value (s, "airlock-adoption-rate")) + div_ls (sum_ls (ctx.get ("rewards-supply") + ctx.get ("rewards-held")) + [2]))
     return "airlock-adoption-rate", update_state (s, "airlock-adoption-rate", airlock_adoption_rate)
 
 
@@ -1313,7 +1372,7 @@ def update_intr_invest_rate (_params, substep, sH, s, _input, **kwargs):
 def update_crypto_invest_rate (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     crypto_hype_updates_crypto_invest_rate (ctx, s)
-    crypto_invest_rate = mul_ls (ctx.get ("crypto-hype-growth") + get_new_value (s, "crypto-invest-rate"))
+    crypto_invest_rate = mul_ls (ctx.get ("crypto-hype-growth") + max_ls ([1] + get_new_value (s, "crypto-invest-rate")))
     return "crypto-invest-rate", update_state (s, "crypto-invest-rate", crypto_invest_rate)
 
 
@@ -1337,7 +1396,7 @@ def update_token_reward_to_held_rate (_params, substep, sH, s, _input, **kwargs)
     airlock_data_shared_updates_token_reward_to_held_rate (ctx, s)
     stake_yield_updates_token_reward_to_held_rate (ctx, s)
     data_value_updates_token_reward_to_held_rate (ctx, s)
-    token_reward_to_held_rate = sum_ls (div_ls (div_ls (mul_ls (div_ls (ctx.get ("shared") + [2]) + ctx.get ("data-value")) + [3]) + ctx.get ("price-delta-pct")) + ctx.get ("stake-yield"))
+    token_reward_to_held_rate = sum_ls (div_ls (get_new_value (s, "token-rewards-pool") + [2]) + ctx.get ("stake-yield"))
     return "token-reward-to-held-rate", update_state (s, "token-reward-to-held-rate", token_reward_to_held_rate)
 
 
@@ -1346,7 +1405,7 @@ def update_token_reward_to_supply_rate (_params, substep, sH, s, _input, **kwarg
     token_price_updates_token_reward_to_supply_rate (ctx, s)
     airlock_data_shared_updates_token_reward_to_supply_rate (ctx, s)
     data_value_updates_token_reward_to_supply_rate (ctx, s)
-    token_reward_to_supply_rate = div_ls (div_ls (mul_ls (div_ls (ctx.get ("shared") + [2]) + ctx.get ("data-value")) + [3]) + ctx.get ("price-delta-pct"))
+    token_reward_to_supply_rate = div_ls (get_new_value (s, "token-rewards-pool") + [2])
     return "token-reward-to-supply-rate", update_state (s, "token-reward-to-supply-rate", token_reward_to_supply_rate)
 
 
@@ -1386,24 +1445,24 @@ def update_token_mint_supply_rate (_params, substep, sH, s, _input, **kwargs):
     return "token-mint-supply-rate", update_state (s, "token-mint-supply-rate", token_mint_supply_rate)
 
 
-cfg = config_sim ({ "N": 10, "T": range (25) })
+cfg = config_sim ({ "N": 10, "T": range (100) })
 init_state = {}
 init_state ["flow-adjustments"] = {}
 init_state ["heuristic-innovation"] = initialize_state ([random.randrange (0, 100)])
 init_state ["scammer-innovation"] = initialize_state ([random.randrange (0, 100)])
 init_state ["scam-profits-per-page"] = initialize_state ([random.randrange (1, 100)])
 init_state ["stake-yield"] = initialize_state (choose_distro ([(1, 0.01), (1, 0.02)]))
-init_state ["max-total-stake-per-entity"] = initialize_state ([random.randrange (0, 100)])
-init_state ["staking-opportunities"] = initialize_state ([random.randrange (0, 100)])
+init_state ["max-total-stake-per-entity"] = initialize_state ([random.randrange (100, 500)])
+init_state ["staking-opportunities"] = initialize_state (1)
 init_state ["heuristic-contradictions"] = initialize_state ([random.randrange (1, 10)])
-init_state ["data-value"] = initialize_state ([random.randrange (0, 100)])
-init_state ["staking-enthusiasm"] = initialize_state ([random.randrange (0, 100)])
-init_state ["money-growth-rate"] = initialize_state ([random.randrange (0, 100)])
-init_state ["crypto-hype"] = initialize_state ([random.randrange (0, 100)])
-init_state ["interlock-hype"] = initialize_state ([random.randrange (0, 100)])
+init_state ["data-value"] = initialize_state (div_ls ([100] + [1000]))
+init_state ["staking-enthusiasm"] = initialize_state (div_ls ([random.randrange (0, 25)] + [100]))
+init_state ["money-growth-rate"] = initialize_state (1.0)
+init_state ["crypto-hype"] = initialize_state ([random.randrange (1, 100)])
+init_state ["interlock-hype"] = initialize_state (1)
 init_state ["token-profit"] = initialize_state ([random.randrange (0, 100)])
 init_state ["airlock-lookup-price"] = initialize_state ([random.randrange (1, 50)])
-init_state ["token-price"] = initialize_state ([random.randrange (0, 100)])
+init_state ["token-price"] = initialize_state (0.5)
 init_state ["scam-upkeep"] = initialize_state (0)
 init_state ["scam-profits"] = initialize_state (0)
 init_state ["potential-scam-profits"] = initialize_state (20000000000)
@@ -1411,7 +1470,7 @@ init_state ["scam-page-successes"] = initialize_state (0)
 init_state ["scam-page-visits"] = initialize_state (0)
 init_state ["resolved-entities"] = initialize_state (0)
 init_state ["grey-area-entities"] = initialize_state (0)
-init_state ["airlock-users"] = initialize_state (0)
+init_state ["airlock-users"] = initialize_state (100)
 init_state ["browser-users"] = initialize_state (3000000000)
 init_state ["data-buyer-money"] = initialize_state (300000000000)
 init_state ["airlock-revenue"] = initialize_state (0)
@@ -1421,7 +1480,7 @@ init_state ["potential-airlock-lookups"] = initialize_state (3000000000000)
 init_state ["airlock-lookups"] = initialize_state (0)
 init_state ["page-visits"] = initialize_state (3000000000000)
 init_state ["intr-investments"] = initialize_state (0)
-init_state ["crypto-investments"] = initialize_state (0)
+init_state ["crypto-investments"] = initialize_state (18000000000)
 init_state ["money-reclaimed"] = initialize_state (0)
 init_state ["money-supply"] = initialize_state (10000000000)
 init_state ["money-mint"] = initialize_state (10000000000)
@@ -1568,3 +1627,7 @@ exp.append_model (initial_state=init_state, model_id='interlock-1', sim_configs=
 exec_mode = ExecutionMode ()
 local_mode_ctx = ExecutionContext (context=exec_mode.local_mode)
 simulation = Executor (exec_context=local_mode_ctx, configs=exp.configs)
+exec_res = simulation.execute ()
+sim_events = exec_res [0]
+sim_res = pd.DataFrame (sim_events)
+sim_res = sim_res.applymap (tuple_to_value)
