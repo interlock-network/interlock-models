@@ -30,13 +30,13 @@ Here is a graph with only the stocks and flows (squares are stocks and
 triangles are flows). You can think of the stocks as cisterns, and of the flows
 as valves, and of the green arrows as pipes.
 
-![](./graphs/interlock-graph-flows-only.png)
+![](../graphs/interlock-graph-flows-only.png)
 
 And here is the graph that contains all of the interactions between all variables.
 Red arrows mean _positive correlation_ and blue arrows mean _negative correlation_.
 Dotted arrows imply _delayed effect_.
 
-![](./graphs/interlock-graph-1.png)
+![](../graphs/interlock-graph-1.png)
 
 # Limitations
 
