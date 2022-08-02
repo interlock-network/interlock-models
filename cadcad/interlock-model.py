@@ -7,13 +7,21 @@ from cadCAD.configuration.utils import bound_norm_random, config_sim, time_step,
 from cadCAD.configuration import Experiment
 from cadCAD.engine import ExecutionMode, ExecutionContext
 from cadCAD.engine import Executor
-def animal_spirit_updates_token_price (ctx, s):
-    if ctx.get ("spirit-multiplier") == None:
-        ctx ["spirit-multiplier"] = []
+def expectation_updates_staking_enthusiasm (ctx, s):
+    if ctx.get ("expectation-multiplier") == None:
+        ctx ["expectation-multiplier"] = []
     
-    spirit_multiplier = ctx.get ("spirit-multiplier")
-    new_val = [1] if eq_ls (get_new_value (s, "animal-spirit") + [0]) [0] else diff_ls ([1] + div_ls ([random.randrange (1, 10)] + [100])) if eq_ls (get_new_value (s, "animal-spirit") + [-1]) [0] else diff_ls ([1] + div_ls ([random.randrange (11, 20)] + [100])) if eq_ls (get_new_value (s, "animal-spirit") + [-2]) [0] else sum_ls ([1] + div_ls ([random.randrange (1, 10)] + [100])) if eq_ls (get_new_value (s, "animal-spirit") + [1]) [0] else sum_ls ([1] + div_ls ([random.randrange (11, 20)] + [100])) if eq_ls (get_new_value (s, "animal-spirit") + [2]) [0] else [-100]
-    append_each (spirit_multiplier, new_val)
+    expectation_multiplier = ctx.get ("expectation-multiplier")
+    new_val = [4] if lt_eq_ls (get_new_value (s, "expectation") + [0]) [0] else [1]
+    append_each (expectation_multiplier, new_val)
+
+def expectation_updates_token_price (ctx, s):
+    if ctx.get ("expectation-multiplier") == None:
+        ctx ["expectation-multiplier"] = []
+    
+    expectation_multiplier = ctx.get ("expectation-multiplier")
+    new_val = [1] if eq_ls (get_new_value (s, "expectation") + [0]) [0] else diff_ls ([1] + div_ls ([random.randrange (1, 10)] + [100])) if eq_ls (get_new_value (s, "expectation") + [-1]) [0] else diff_ls ([1] + div_ls ([random.randrange (11, 20)] + [100])) if eq_ls (get_new_value (s, "expectation") + [-2]) [0] else sum_ls ([1] + div_ls ([random.randrange (1, 10)] + [100])) if eq_ls (get_new_value (s, "expectation") + [1]) [0] else sum_ls ([1] + div_ls ([random.randrange (11, 20)] + [100])) if eq_ls (get_new_value (s, "expectation") + [2]) [0] else [-100]
+    append_each (expectation_multiplier, new_val)
 
 def crypto_hype_updates_interlock_hype (ctx, s):
     if ctx.get ("crypto-hype-growth") == None:
@@ -405,6 +413,14 @@ def intr_investments_updates_token_unhold_rate (ctx, s):
     append_each (uninvested, new_val)
 
 def money_supply_updates_crypto_hype (ctx, s):
+    if ctx.get ("extra-cash-growth") == None:
+        ctx ["extra-cash-growth"] = []
+    
+    extra_cash_growth = ctx.get ("extra-cash-growth")
+    new_val = div_ls (get_new_value (s, "money-supply") + get_old_value (s, "money-supply"))
+    append_each (extra_cash_growth, new_val)
+
+def money_supply_updates_token_price (ctx, s):
     if ctx.get ("extra-cash-growth") == None:
         ctx ["extra-cash-growth"] = []
     
@@ -1267,7 +1283,8 @@ def update_data_value (_params, substep, sH, s, _input, **kwargs):
 
 def update_staking_enthusiasm (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    staking_enthusiasm = min_ls ([100] + max_ls ([0] + div_ls ([random.randrange (1, 25)] + [100])))
+    expectation_updates_staking_enthusiasm (ctx, s)
+    staking_enthusiasm = min_ls ([100] + max_ls ([0] + mul_ls (ctx.get ("expectation-multiplier") + div_ls ([random.randrange (5, 25)] + [100]))))
     return "staking-enthusiasm", update_state (s, "staking-enthusiasm", staking_enthusiasm)
 
 
@@ -1287,7 +1304,7 @@ def update_crypto_hype (_params, substep, sH, s, _input, **kwargs):
 def update_interlock_hype (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     crypto_hype_updates_interlock_hype (ctx, s)
-    interlock_hype = min_ls ([100] + max_ls ([1] + mul_ls (get_new_value (s, "interlock-hype") + ctx.get ("crypto-hype-growth") + choose_distro ([(1, 1.1), (1, 1.5), (1, 2), (3, 1.05), (6, 1.01)]))))
+    interlock_hype = min_ls ([100] + max_ls ([1] + mul_ls (get_new_value (s, "interlock-hype") + ctx.get ("crypto-hype-growth"))))
     return "interlock-hype", update_state (s, "interlock-hype", interlock_hype)
 
 
@@ -1309,15 +1326,16 @@ def update_token_price (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     token_supply_updates_token_price (ctx, s)
     intr_investments_updates_token_price (ctx, s)
-    animal_spirit_updates_token_price (ctx, s)
-    token_price = min_ls ([60] + max_ls ([0.01] + div_ls (sum_ls (mul_ls (get_new_value (s, "token-price") + ctx.get ("spirit-multiplier") + [4]) + mul_ls (get_new_value (s, "token-price") + ctx.get ("invest-price-growth")) + mul_ls (get_new_value (s, "token-price") + ctx.get ("supply-price-growth"))) + [6])))
+    money_supply_updates_token_price (ctx, s)
+    expectation_updates_token_price (ctx, s)
+    token_price = min_ls ([60] + max_ls ([0.01] + div_ls (sum_ls (mul_ls (get_new_value (s, "token-price") + ctx.get ("expectation-multiplier") + [4]) + mul_ls (get_new_value (s, "token-price") + ctx.get ("invest-price-growth")) + mul_ls (get_new_value (s, "token-price") + ctx.get ("supply-price-growth"))) + [6])))
     return "token-price", update_state (s, "token-price", token_price)
 
 
-def update_animal_spirit (_params, substep, sH, s, _input, **kwargs):
+def update_expectation (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    animal_spirit = min_ls ([2] + max_ls ([-2] + choose_distro ([(1, 2), (1, -1), (6, 1)]) if eq_ls (get_new_value (s, "animal-spirit") + [-2]) [0] else choose_distro ([(1, 2), (6, -2), (7, -1), (10, 1)]) if eq_ls (get_new_value (s, "animal-spirit") + [-1]) [0] else choose_distro ([(1, 2), (1, 0), (3, -1)]) if eq_ls (get_new_value (s, "animal-spirit") + [0]) [0] else choose_distro ([(2, -2), (3, 0), (5, 2), (9, -1), (11, 1)]) if eq_ls (get_new_value (s, "animal-spirit") + [1]) [0] else choose_distro ([(1, 0), (4, 1), (4, -1), (5, 2)]) if eq_ls (get_new_value (s, "animal-spirit") + [2]) [0] else [-100]))
-    return "animal-spirit", update_state (s, "animal-spirit", animal_spirit)
+    expectation = min_ls ([2] + max_ls ([-2] + choose_distro ([(1, 2), (1, -1), (6, 1)]) if eq_ls (get_new_value (s, "expectation") + [-2]) [0] else choose_distro ([(1, 2), (6, -2), (7, -1), (10, 1)]) if eq_ls (get_new_value (s, "expectation") + [-1]) [0] else choose_distro ([(1, 2), (1, 0), (3, -1)]) if eq_ls (get_new_value (s, "expectation") + [0]) [0] else choose_distro ([(2, -2), (3, 0), (5, 2), (9, -1), (11, 1)]) if eq_ls (get_new_value (s, "expectation") + [1]) [0] else choose_distro ([(1, 0), (4, 1), (4, -1), (5, 2)]) if eq_ls (get_new_value (s, "expectation") + [2]) [0] else [-100]))
+    return "expectation", update_state (s, "expectation", expectation)
 
 
 def update_scam_upkeep_rate (_params, substep, sH, s, _input, **kwargs):
@@ -1389,7 +1407,7 @@ def update_airlock_abandonment_rate (_params, substep, sH, s, _input, **kwargs):
     token_reward_to_supply_rate_updates_airlock_abandonment_rate (ctx, s)
     heuristic_contradictions_updates_airlock_abandonment_rate (ctx, s)
     token_price_updates_airlock_abandonment_rate (ctx, s)
-    airlock_abandonment_rate = mul_ls (ctx.get ("contradiction-delta") + max_ls ([1] + get_new_value (s, "airlock-abandonment-rate")) + div_ls (sum_ls (ctx.get ("rewards-supply") + ctx.get ("rewards-held")) + [2]))
+    airlock_abandonment_rate = mul_ls (ctx.get ("contradiction-delta") + max_ls ([1] + get_new_value (s, "airlock-abandonment-rate")) + mul_ls (ctx.get ("price") + div_ls (sum_ls (ctx.get ("rewards-supply") + ctx.get ("rewards-held")) + [2])))
     return "airlock-abandonment-rate", update_state (s, "airlock-abandonment-rate", airlock_abandonment_rate)
 
 
@@ -1529,7 +1547,7 @@ init_state ["interlock-hype"] = initialize_state (1)
 init_state ["token-profit"] = initialize_state ([random.randrange (0, 100)])
 init_state ["airlock-lookup-price"] = initialize_state ([random.randrange (1, 50)])
 init_state ["token-price"] = initialize_state (1.2)
-init_state ["animal-spirit"] = initialize_state ([random.randrange (-2, 2)])
+init_state ["expectation"] = initialize_state ([random.randrange (-2, 2)])
 init_state ["scam-upkeep"] = initialize_state (0)
 init_state ["scam-profits"] = initialize_state (0)
 init_state ["potential-scam-profits"] = initialize_state (20000000000)
@@ -1597,7 +1615,7 @@ indicators_and_flows ["interlock-hype"] = update_interlock_hype
 indicators_and_flows ["token-profit"] = update_token_profit
 indicators_and_flows ["airlock-lookup-price"] = update_airlock_lookup_price
 indicators_and_flows ["token-price"] = update_token_price
-indicators_and_flows ["animal-spirit"] = update_animal_spirit
+indicators_and_flows ["expectation"] = update_expectation
 indicators_and_flows ["scam-upkeep-rate"] = update_scam_upkeep_rate
 indicators_and_flows ["scam-profit-rate"] = update_scam_profit_rate
 indicators_and_flows ["scam-page-success-rate"] = update_scam_page_success_rate
