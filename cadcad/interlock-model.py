@@ -20,7 +20,7 @@ def s_expectation_updates_token_price (ctx, s):
         ctx ["expectation-multiplier"] = []
     
     expectation_multiplier = ctx.get ("expectation-multiplier")
-    new_val = [1] if eq_ls (get_new_value (s, "expectation") + [0]) [0] else diff_ls ([1] + div_ls ([random.randrange (1, 10)] + [100])) if eq_ls (get_new_value (s, "expectation") + [-1]) [0] else diff_ls ([1] + div_ls ([random.randrange (11, 20)] + [100])) if eq_ls (get_new_value (s, "expectation") + [-2]) [0] else sum_ls ([1] + div_ls ([random.randrange (1, 10)] + [100])) if eq_ls (get_new_value (s, "expectation") + [1]) [0] else sum_ls ([1] + div_ls ([random.randrange (11, 20)] + [100])) if eq_ls (get_new_value (s, "expectation") + [2]) [0] else [-100]
+    new_val = [1] if eq_ls (get_new_value (s, "expectation") + [0]) [0] else diff_ls ([1] + div_ls ([bound_norm_random (sim_rng, 1, 10)] + [100])) if eq_ls (get_new_value (s, "expectation") + [-1]) [0] else diff_ls ([1] + div_ls ([bound_norm_random (sim_rng, 11, 20)] + [100])) if eq_ls (get_new_value (s, "expectation") + [-2]) [0] else sum_ls ([1] + div_ls ([bound_norm_random (sim_rng, 1, 10)] + [100])) if eq_ls (get_new_value (s, "expectation") + [1]) [0] else sum_ls ([1] + div_ls ([bound_norm_random (sim_rng, 11, 20)] + [100])) if eq_ls (get_new_value (s, "expectation") + [2]) [0] else [-100]
     append_each (expectation_multiplier, new_val)
 
 def s_crypto_hype_updates_interlock_hype (ctx, s):
@@ -856,7 +856,7 @@ def s_scammer_innovation_updates_heuristic_contradictions (ctx, s):
         ctx ["innovation"] = []
     
     innovation = ctx.get ("innovation")
-    new_val = sum_ls (get_new_value (s, "heuristic-contradictions") + mul_ls (div_ls ([random.randrange (1, 50)] + [100]) + get_new_value (s, "heuristic-contradictions") + get_new_value (s, "scammer-innovation")))
+    new_val = sum_ls (get_new_value (s, "heuristic-contradictions") + mul_ls (div_ls ([bound_norm_random (sim_rng, 1, 50)] + [100]) + get_new_value (s, "heuristic-contradictions") + get_new_value (s, "scammer-innovation")))
     append_each (innovation, new_val)
 
 def s_heuristic_contradictions_updates_scam_page_success_rate (ctx, s):
@@ -920,9 +920,10 @@ def s_heuristic_innovation_updates_heuristic_contradictions (ctx, s):
         ctx ["innovation"] = []
     
     innovation = ctx.get ("innovation")
-    new_val = diff_ls (get_new_value (s, "heuristic-contradictions") + mul_ls (div_ls ([random.randrange (1, 50)] + [100]) + get_new_value (s, "heuristic-contradictions") + get_new_value (s, "heuristic-innovation")))
+    new_val = diff_ls (get_new_value (s, "heuristic-contradictions") + mul_ls (div_ls ([bound_norm_random (sim_rng, 1, 50)] + [100]) + get_new_value (s, "heuristic-contradictions") + get_new_value (s, "heuristic-innovation")))
     append_each (innovation, new_val)
 
+sim_rng = np.random.RandomState (12421)
 def max_ls (ls):
     if len (ls) == 0:
         return []
@@ -1139,7 +1140,7 @@ def choose_distro (distro):
     for tup in distro:
         summage = (summage + tup [0])
 
-    choice = random.randrange (1, summage)
+    choice = bound_norm_random (sim_rng, 1, summage)
     for tup in distro:
         i = (i + tup [0])
         if i >= choice:
@@ -1244,7 +1245,7 @@ def s_update_scammer_innovation (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_scam_profits_per_page (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    scam_profits_per_page = min_ls ([100] + max_ls ([1] + [random.randrange (1, 100)]))
+    scam_profits_per_page = min_ls ([100] + max_ls ([1] + [bound_norm_random (sim_rng, 1, 100)]))
     return "scam-profits-per-page", update_state (s, "scam-profits-per-page", scam_profits_per_page)
 
 
@@ -1256,7 +1257,7 @@ def s_update_stake_yield (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_max_total_stake_per_entity (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    max_total_stake_per_entity = min_ls ([500] + max_ls ([100] + [random.randrange (100, 500)]))
+    max_total_stake_per_entity = min_ls ([500] + max_ls ([100] + [bound_norm_random (sim_rng, 100, 500)]))
     return "max-total-stake-per-entity", update_state (s, "max-total-stake-per-entity", max_total_stake_per_entity)
 
 
@@ -1271,20 +1272,20 @@ def s_update_heuristic_contradictions (_params, substep, sH, s, _input, **kwargs
     ctx = {}
     s_heuristic_innovation_updates_heuristic_contradictions (ctx, s)
     s_scammer_innovation_updates_heuristic_contradictions (ctx, s)
-    heuristic_contradictions = min_ls ([100] + max_ls ([0] + max_ls ([random.randrange (5, 15)] + sum_ls (ctx.get ("innovation")))))
+    heuristic_contradictions = min_ls ([100] + max_ls ([0] + max_ls ([bound_norm_random (sim_rng, 5, 15)] + sum_ls (ctx.get ("innovation")))))
     return "heuristic-contradictions", update_state (s, "heuristic-contradictions", heuristic_contradictions)
 
 
 def s_update_data_value (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    data_value = min_ls (div_ls ([600] + [1000]) + max_ls (div_ls ([100] + [1000]) + div_ls ([random.randrange (100, 600)] + [1000])))
+    data_value = min_ls (div_ls ([600] + [1000]) + max_ls (div_ls ([100] + [1000]) + div_ls ([bound_norm_random (sim_rng, 100, 600)] + [1000])))
     return "data-value", update_state (s, "data-value", data_value)
 
 
 def s_update_staking_enthusiasm (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_expectation_updates_staking_enthusiasm (ctx, s)
-    staking_enthusiasm = min_ls ([100] + max_ls ([0] + mul_ls (ctx.get ("expectation-multiplier") + div_ls ([random.randrange (5, 25)] + [100]))))
+    staking_enthusiasm = min_ls ([100] + max_ls ([0] + mul_ls (ctx.get ("expectation-multiplier") + div_ls ([bound_norm_random (sim_rng, 5, 25)] + [100]))))
     return "staking-enthusiasm", update_state (s, "staking-enthusiasm", staking_enthusiasm)
 
 
@@ -1532,22 +1533,22 @@ def s_update_token_mint_supply_rate (_params, substep, sH, s, _input, **kwargs):
 cfg = config_sim ({ "N": 10, "T": range (100) })
 init_state = {}
 init_state ["flow-adjustments"] = {}
-init_state ["heuristic-innovation"] = initialize_state ([random.randrange (0, 100)])
-init_state ["scammer-innovation"] = initialize_state ([random.randrange (0, 100)])
-init_state ["scam-profits-per-page"] = initialize_state ([random.randrange (1, 100)])
+init_state ["heuristic-innovation"] = initialize_state ([bound_norm_random (sim_rng, 0, 100)])
+init_state ["scammer-innovation"] = initialize_state ([bound_norm_random (sim_rng, 0, 100)])
+init_state ["scam-profits-per-page"] = initialize_state ([bound_norm_random (sim_rng, 1, 100)])
 init_state ["stake-yield"] = initialize_state (choose_distro ([(1, 0.01), (1, 0.02)]))
-init_state ["max-total-stake-per-entity"] = initialize_state ([random.randrange (100, 500)])
+init_state ["max-total-stake-per-entity"] = initialize_state ([bound_norm_random (sim_rng, 100, 500)])
 init_state ["staking-opportunities"] = initialize_state (1)
-init_state ["heuristic-contradictions"] = initialize_state ([random.randrange (1, 10)])
+init_state ["heuristic-contradictions"] = initialize_state ([bound_norm_random (sim_rng, 1, 10)])
 init_state ["data-value"] = initialize_state (div_ls ([100] + [1000]))
-init_state ["staking-enthusiasm"] = initialize_state (div_ls ([random.randrange (0, 25)] + [100]))
+init_state ["staking-enthusiasm"] = initialize_state (div_ls ([bound_norm_random (sim_rng, 0, 25)] + [100]))
 init_state ["money-growth-rate"] = initialize_state (1.0)
 init_state ["crypto-hype"] = initialize_state (25)
 init_state ["interlock-hype"] = initialize_state (1)
-init_state ["token-profit"] = initialize_state ([random.randrange (0, 100)])
-init_state ["airlock-lookup-price"] = initialize_state ([random.randrange (1, 50)])
+init_state ["token-profit"] = initialize_state ([bound_norm_random (sim_rng, 0, 100)])
+init_state ["airlock-lookup-price"] = initialize_state ([bound_norm_random (sim_rng, 1, 50)])
 init_state ["token-price"] = initialize_state (1.2)
-init_state ["expectation"] = initialize_state ([random.randrange (-2, 2)])
+init_state ["expectation"] = initialize_state ([bound_norm_random (sim_rng, -2, 2)])
 init_state ["scam-upkeep"] = initialize_state (0)
 init_state ["scam-profits"] = initialize_state (0)
 init_state ["potential-scam-profits"] = initialize_state (20000000000)
