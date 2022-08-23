@@ -5,6 +5,7 @@ import constraint as lim
 import plotly
 import plotly.express as px
 import random
+import math
 from cadCAD.configuration.utils import bound_norm_random, config_sim, time_step, env_trigger
 from cadCAD.configuration import Experiment
 from cadCAD.engine import ExecutionMode, ExecutionContext
@@ -22,7 +23,7 @@ def s_expectation_updates_token_price (ctx, s):
         ctx ["expectation-multiplier"] = []
     
     expectation_multiplier = ctx.get ("expectation-multiplier")
-    new_val = [1] if eq_ls (get_new_value (s, "expectation") + [const_stag]) [0] else diff_ls ([1] + div_ls ([bound_norm_random (sim_rng, 1, 10)] + [100])) if eq_ls (get_new_value (s, "expectation") + [const_bigup]) [0] else diff_ls ([1] + div_ls ([bound_norm_random (sim_rng, 11, 20)] + [100])) if eq_ls (get_new_value (s, "expectation") + [const_bigdip]) [0] else sum_ls ([1] + div_ls ([bound_norm_random (sim_rng, 1, 10)] + [100])) if eq_ls (get_new_value (s, "expectation") + [const_up]) [0] else sum_ls ([1] + div_ls ([bound_norm_random (sim_rng, 11, 20)] + [100])) if eq_ls (get_new_value (s, "expectation") + [const_bigup]) [0] else [-100]
+    new_val = [1] if eq_ls (get_new_value (s, "expectation") + [const_stag]) [0] else diff_ls ([1] + div_ls ([sim_random (1, 10)] + [100])) if eq_ls (get_new_value (s, "expectation") + [const_bigup]) [0] else diff_ls ([1] + div_ls ([sim_random (11, 20)] + [100])) if eq_ls (get_new_value (s, "expectation") + [const_bigdip]) [0] else sum_ls ([1] + div_ls ([sim_random (1, 10)] + [100])) if eq_ls (get_new_value (s, "expectation") + [const_up]) [0] else sum_ls ([1] + div_ls ([sim_random (11, 20)] + [100])) if eq_ls (get_new_value (s, "expectation") + [const_bigup]) [0] else [-100]
     append_each (expectation_multiplier, new_val)
 
 def s_crypto_hype_updates_interlock_hype (ctx, s):
@@ -443,7 +444,7 @@ def s_intr_investments_updates_token_price (ctx, s):
         ctx ["invest-price-growth"] = []
     
     invest_price_growth = ctx.get ("invest-price-growth")
-    new_val = div_ls (get_new_value (s, "intr-investments") + get_old_value (s, "intr-investments"))
+    new_val = div_ls_safe (get_new_value (s, "intr-investments") + get_old_value (s, "intr-investments"))
     append_each (invest_price_growth, new_val)
 
 def s_token_price_updates_token_profit (ctx, s):
@@ -842,7 +843,7 @@ def s_scam_page_success_rate_updates_scammer_innovation (ctx, s):
         ctx ["urgency"] = []
     
     urgency = ctx.get ("urgency")
-    new_val = div_ls (get_old_value (s, "scam-page-success-rate") + get_new_value (s, "scam-page-success-rate"))
+    new_val = div_ls (get_old_value (s, "scam-page-success-rate") + max_ls ([1] + get_new_value (s, "scam-page-success-rate")))
     append_each (urgency, new_val)
 
 def s_scammer_innovation_updates_scam_upkeep_rate (ctx, s):
@@ -858,7 +859,7 @@ def s_scammer_innovation_updates_heuristic_contradictions (ctx, s):
         ctx ["innovation"] = []
     
     innovation = ctx.get ("innovation")
-    new_val = sum_ls (get_new_value (s, "heuristic-contradictions") + mul_ls (div_ls ([bound_norm_random (sim_rng, 1, 50)] + [100]) + get_new_value (s, "heuristic-contradictions") + get_new_value (s, "scammer-innovation")))
+    new_val = sum_ls (get_new_value (s, "heuristic-contradictions") + mul_ls (div_ls ([sim_random (1, 50)] + [100]) + get_new_value (s, "heuristic-contradictions") + get_new_value (s, "scammer-innovation")))
     append_each (innovation, new_val)
 
 def s_heuristic_contradictions_updates_scam_page_success_rate (ctx, s):
@@ -922,7 +923,7 @@ def s_heuristic_innovation_updates_heuristic_contradictions (ctx, s):
         ctx ["innovation"] = []
     
     innovation = ctx.get ("innovation")
-    new_val = diff_ls (get_new_value (s, "heuristic-contradictions") + mul_ls (div_ls ([bound_norm_random (sim_rng, 1, 50)] + [100]) + get_new_value (s, "heuristic-contradictions") + get_new_value (s, "heuristic-innovation")))
+    new_val = diff_ls (get_new_value (s, "heuristic-contradictions") + mul_ls (div_ls ([sim_random (1, 50)] + [100]) + get_new_value (s, "heuristic-contradictions") + get_new_value (s, "heuristic-innovation")))
     append_each (innovation, new_val)
 
 morph = lim.Problem ()
@@ -935,43 +936,94 @@ def tuple_list_to_agg (ls):
 
 
 class Aggregation:
-    schema = []
-    agg = "count"
-    base = 0
-    min_mag = 0
-    max_mag = 0
-    step = 0
-    root = {}
+    agg_stats = {}
     def __init__ (self, schema, agg, base=0, min_mag=0, max_mag=0, step=0):
         self.schema = schema
         self.agg = agg
+        self.root = {}
         self.base = base
         self.min_mag = min_mag
         self.max_mag = max_mag
         self.step = step
 
 
+    def agg_dict_walk (self, hasht, func, depth, tup):
+        for k in hasht:
+            val = hasht [k]
+            if isinstance (val, dict):
+                self.agg_dict_walk (val, func, depth, (tup + (k,)))
+            else:
+                func ((tup + (k, val)))
+            
 
 
-def agg_choose (agg, keep):
+
+
+
+def choose_agg_ls (agg, keep):
+    summage = 0
+    i = 0
+    last = 0
+    for tup in agg:
+        last = (len (tup) - 1)
+        summage = (summage + tup [last])
+
+    choice = sim_random (0, (summage - 1))
+    for tup in agg:
+        last = (len (tup) - 1)
+        i = (i + tup [last])
+        if i >= choice:
+            ret = []
+            for k in keep:
+                ret.append (tup [k])
+
+            return ret
+        
+
+
+
+def agg_to_tuple_list (agg):
+    ret = []
+    max_depth = len (agg.schema)
+    def add_tuple (tuple):
+        ret.append (tuple)
+
+
+    agg.agg_dict_walk (agg.root, add_tuple, max_depth, ())
+    return ret
+
+
+def agg_choose (agg_or_ls, keep):
+    if isinstance (agg_or_ls, list):
+        agg = agg_or_ls [0]
+    elif isinstance (agg_or_ls, Aggregation):
+        agg = agg_or_ls
+    
     return choose_agg_ls (agg_to_tuple_list (agg), keep)
 
 
 def agg_load (agg, path):
     ret = agg.root
-    for k in path:
+    for k_or_ls in path:
+        if isinstance (k_or_ls, list):
+            k = k_or_ls [0]
+        else:
+            k = k_or_ls
+        
         ret = ret.get (k)
 
     return ret
 
 
 def agg_store (agg, path, val):
-    hash_prev = None
+    hasht_prev = None
     k_prev = None
-    hash = agg.root
+    hasht = agg.root
+    pl = len (path)
     if isinstance (val, list):
         val = val [0]
     
+    pi = 1
     for ki in path:
         if isinstance (ki, list):
             k = ki [0]
@@ -979,25 +1031,37 @@ def agg_store (agg, path, val):
             k = ki
         
         k_prev = k
-        hash_prev = hash
-        hash = hash.get (k)
-        if hash == None:
-            hash = {}
-            hash_prev [k] = hash
+        hasht_prev = hasht
+        hasht = hasht.get (k)
+        if (hasht == None and not pi == pl):
+            hasht = {}
+            hasht_prev [k] = hasht
+        elif pi == pl:
+            hasht_prev [k] = val
         
+        pi = (pi + 1)
 
-    hash_prev [k_prev] = val
 
 
-def agg_cols (cols, agg):
+def agg_cols (cols, agg_or_ls):
+    if isinstance (agg_or_ls, list):
+        agg = agg_or_ls [0]
+    else:
+        agg = agg_or_ls
+    
     tuple_list = agg_to_tuple_list (agg)
     ret = Aggregation (agg.schema, agg.agg, agg.base, agg.min_mag, agg.max_mag, agg.step)
     depth = 0
     path_len = (len (cols) - 1)
     for e in tuple_list:
         new = ()
-        for c in cols:
-            new = (new + e [c])
+        for c_or_ls in cols:
+            if isinstance (c_or_ls, list):
+                c = c_or_ls [0]
+            else:
+                c = c_or_ls
+            
+            new = (new + (e [c],))
 
         found = agg_load (ret, new [:path_len])
         if found == None:
@@ -1009,7 +1073,12 @@ def agg_cols (cols, agg):
     return ret
 
 
-def agg_rows (matches, agg):
+def agg_rows (matches, agg_or_ls):
+    if isinstance (agg_or_ls, list):
+        agg = agg_or_ls [0]
+    else:
+        agg = agg_or_ls
+    
     ret = Aggregation (agg.schema, agg.agg, agg.base, agg.min_mag, agg.max_mag, agg.step)
     for k in matches:
         found = agg_load (agg, k)
@@ -1039,6 +1108,17 @@ def aggregate (agg_orig, keys):
         else:
             agg_store (agg, keys, (found + 1))
         
+    elif agg.agg == "sum":
+        kl = len (keys)
+        pl = (kl - 1)
+        path = keys [:pl]
+        to_agg = keys [pl]
+        found = agg_load (agg, path)
+        if found == None:
+            agg_store (agg, path, sum_ls (to_agg) [0])
+        else:
+            agg_store (agg, path, (found + sum_ls (to_agg) [0]))
+        
     
 
 
@@ -1056,6 +1136,8 @@ def generate_params ():
     morph.addVariable ("stake-yield-policy", [const_at_market, const_above_market, const_below_market])
     morph.addVariable ("airlock-lookup-policy", [const_at_cost, const_above_cost, const_below_cost])
     morph.addVariable ("heuristic-innovation-scenario", [const_industrialized, const_leading, const_holding, const_lagging, const_terminal])
+    morph.addVariable ("token-valuation", [const_half_value])
+    morph.addVariable ("token-reward-price-normalization", [const_yes, const_no])
     morph.addVariable ("token-reward-policy", [const_firehose, const_trickle, const_halted])
     morph.addVariable ("supply-perception", [const_supply_expansion, const_supply_filling])
     morph.addVariable ("max-total-stake-policy", [const_egalitarian, const_halving, const_doubling])
@@ -1155,6 +1237,9 @@ def div_ls (ls):
         if first == 1:
             ret_val = n
             first = 0
+            if n == 0:
+                return [0]
+            
         elif first == 0:
             ret_val = (ret_val / n)
         
@@ -1174,6 +1259,9 @@ def div_ls_safe (ls):
         if first == 1:
             ret_val = n
             first = 0
+            if n == 0:
+                return [0]
+            
         elif first == 0:
             if n == 0:
                 ret_val = (ret_val / 0.000000001)
@@ -1328,48 +1416,8 @@ def gt_eq_ls (ls):
     return [ret_val]
 
 
-def agg_dict_walk (hash, func, depth, tup):
-    for k in hash:
-        val = hash [k]
-        if isinstance ({}):
-            agg_dict_walk (val, func, depth, (tup + k))
-        else:
-            func ((tup + k))
-        
-
-
-
-def agg_to_tuple_list (agg):
-    ret = []
-    max_depth = len (agg.schema)
-    def add_tuple (tuple):
-        ret.append (tuple)
-
-
-    agg_dict_walk (agg.dict, add_tuple, max_depth, tuple)
-    return ret
-
-
-def choose_agg_ls (agg, keep):
-    summage = 0
-    i = 0
-    last = 0
-    for tup in agg:
-        last = (len (tup) - 1)
-        summage = (summage + tup [last])
-
-    choice = bound_norm_random (sim_rng, 1, summage)
-    for tup in agg:
-        last = (len (tup) - 1)
-        i = (i + tup [last])
-        if i >= choice:
-            ret = []
-            for k in keep:
-                ret.append (tup [k])
-
-            return ret
-        
-
+def sim_random (a, b):
+    return math.floor (bound_norm_random (sim_rng, a, b))
 
 
 def append_each (target, values):
@@ -1393,6 +1441,8 @@ def initialize_state (val):
         return [val], [val]
     elif isinstance (val, int):
         return [val], [val]
+    elif isinstance (val, Aggregation):
+        return val, val
     
 
 
@@ -1457,6 +1507,9 @@ const_leading = 1
 const_holding = 0
 const_lagging = -1
 const_terminal = -2
+const_no = 0
+const_yes = 1
+const_half_value = 0.5
 const_firehose = 2
 const_trickle = 1
 const_halted = 0
@@ -1482,12 +1535,6 @@ const_observed_money_growth_id = 0
 const_observed_expectation_chain = agg_store_records (Aggregation (["in", "out"], "count"), [[[const_bigdip], [const_bigup], 1], [[const_bigdip], [const_dip], 1], [[const_bigdip], [const_up], 6], [[const_dip], [const_bigup], 1], [[const_dip], [const_bigdip], 6], [[const_dip], [const_dip], 7], [[const_dip], [const_up], 10], [[const_stag], [const_bigup], 1], [[const_stag], [const_stag], 1], [[const_stag], [const_dip], 3], [[const_up], [const_bigdip], 2], [[const_up], [const_stag], 3], [[const_up], [const_bigup], 5], [[const_up], [const_dip], 9], [[const_up], [const_up], 11], [[const_bigup], [const_stag], 1], [[const_bigup], [const_up], 4], [[const_bigup], [const_dip], 4], [[const_bigup], [const_bigup], 5]])
 const_buy = 0
 const_sell = 1
-def s_update_order_book (_params, substep, sH, s, _input, **kwargs):
-    ctx = {}
-    order_book = aggregate (get_new_value (s, "order-book"), [ctx.get ("bought-or-sold")])
-    return "order-book", update_state (s, "order-book", order_book)
-
-
 def s_update_heuristic_innovation (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_heuristic_contradictions_updates_heuristic_innovation (ctx, s)
@@ -1504,7 +1551,7 @@ def s_update_scammer_innovation (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_scam_profits_per_page (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    scam_profits_per_page = min_ls ([100] + max_ls ([1] + [bound_norm_random (sim_rng, 1, 100)]))
+    scam_profits_per_page = min_ls ([100] + max_ls ([1] + [sim_random (1, 100)]))
     return "scam-profits-per-page", update_state (s, "scam-profits-per-page", scam_profits_per_page)
 
 
@@ -1516,7 +1563,7 @@ def s_update_stake_yield (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_max_total_stake_per_entity (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    max_total_stake_per_entity = min_ls ([500] + max_ls ([100] + [bound_norm_random (sim_rng, 100, 500)]))
+    max_total_stake_per_entity = min_ls ([500] + max_ls ([100] + [sim_random (100, 500)]))
     return "max-total-stake-per-entity", update_state (s, "max-total-stake-per-entity", max_total_stake_per_entity)
 
 
@@ -1531,20 +1578,20 @@ def s_update_heuristic_contradictions (_params, substep, sH, s, _input, **kwargs
     ctx = {}
     s_heuristic_innovation_updates_heuristic_contradictions (ctx, s)
     s_scammer_innovation_updates_heuristic_contradictions (ctx, s)
-    heuristic_contradictions = min_ls ([100] + max_ls ([0] + max_ls ([bound_norm_random (sim_rng, 5, 15)] + sum_ls (ctx.get ("innovation")))))
+    heuristic_contradictions = min_ls ([100] + max_ls ([0] + max_ls ([sim_random (5, 15)] + sum_ls (ctx.get ("innovation")))))
     return "heuristic-contradictions", update_state (s, "heuristic-contradictions", heuristic_contradictions)
 
 
 def s_update_data_value (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    data_value = min_ls (div_ls ([600] + [1000]) + max_ls (div_ls ([100] + [1000]) + div_ls ([bound_norm_random (sim_rng, 100, 600)] + [1000])))
+    data_value = min_ls (div_ls ([600] + [1000]) + max_ls (div_ls ([100] + [1000]) + div_ls ([sim_random (100, 600)] + [1000])))
     return "data-value", update_state (s, "data-value", data_value)
 
 
 def s_update_staking_enthusiasm (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_expectation_updates_staking_enthusiasm (ctx, s)
-    staking_enthusiasm = min_ls ([100] + max_ls ([0] + mul_ls (ctx.get ("expectation-multiplier") + div_ls ([bound_norm_random (sim_rng, 5, 25)] + [100]))))
+    staking_enthusiasm = min_ls ([100] + max_ls ([0] + mul_ls (ctx.get ("expectation-multiplier") + div_ls ([sim_random (5, 25)] + [100]))))
     return "staking-enthusiasm", update_state (s, "staking-enthusiasm", staking_enthusiasm)
 
 
@@ -1578,7 +1625,7 @@ def s_update_token_profit (_params, substep, sH, s, _input, **kwargs):
 def s_update_airlock_lookup_price (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_token_price_updates_airlock_lookup_price (ctx, s)
-    airlock_lookup_price = min_ls ([50] + max_ls ([1] + div_ls (get_new_value (s, "airlock-lookup-pirce") + ctx.get ("price-delta-pct"))))
+    airlock_lookup_price = min_ls ([50] + max_ls ([1] + div_ls (get_new_value (s, "airlock-lookup-price") + ctx.get ("price-delta-pct"))))
     return "airlock-lookup-price", update_state (s, "airlock-lookup-price", airlock_lookup_price)
 
 
@@ -1600,7 +1647,7 @@ def s_update_token_price (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_expectation (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    expectation = min_ls ([2] + max_ls ([-2] + agg_choose (agg_cols ([[1], [2]], agg_rows ([[get_new_value (s, "expectation")]], [const_observed_expectation_chain] if eq_ls ([_params ["expectation-chain"]] + [const_observed_expectation_chain_id]) [0] else [-999])), [1])))
+    expectation = min_ls ([2] + max_ls ([-2] + agg_choose (agg_cols ([[1], [2]], agg_rows ([[get_new_value (s, "expectation")]], [const_observed_expectation_chain] if eq_ls ([_params ["expectation-chain"]] + [const_observed_expectation_chain_id]) [0] else [-999])), [0])))
     return "expectation", update_state (s, "expectation", expectation)
 
 
@@ -1795,27 +1842,26 @@ def s_update_token_mint_supply_rate (_params, substep, sH, s, _input, **kwargs):
     return "token-mint-supply-rate", update_state (s, "token-mint-supply-rate", token_mint_supply_rate)
 
 
-cfg = config_sim ({ "N": 10, "T": range (100), "M": generate_params () })
+cfg = config_sim ({ "N": 1, "T": range (100), "M": generate_params () })
 init_state = {}
 init_state ["flow-adjustments"] = {}
-init_state ["order-book"] = initialize_state (Aggregation (["bought-or-sold"], "count"))
-init_state ["heuristic-innovation"] = initialize_state ([bound_norm_random (sim_rng, 0, 100)])
-init_state ["scammer-innovation"] = initialize_state ([bound_norm_random (sim_rng, 0, 100)])
-init_state ["scam-profits-per-page"] = initialize_state ([bound_norm_random (sim_rng, 1, 100)])
+init_state ["heuristic-innovation"] = initialize_state ([sim_random (0, 100)])
+init_state ["scammer-innovation"] = initialize_state ([sim_random (0, 100)])
+init_state ["scam-profits-per-page"] = initialize_state ([sim_random (1, 100)])
 init_state ["stake-yield"] = initialize_state (agg_choose (agg_store_records (Aggregation (["yield"], "count"), [[0.01, 1], [0.02, 1]]), [0]))
-init_state ["max-total-stake-per-entity"] = initialize_state ([bound_norm_random (sim_rng, 100, 500)])
+init_state ["max-total-stake-per-entity"] = initialize_state ([sim_random (100, 500)])
 init_state ["staking-opportunities"] = initialize_state (1)
-init_state ["heuristic-contradictions"] = initialize_state ([bound_norm_random (sim_rng, 1, 10)])
+init_state ["heuristic-contradictions"] = initialize_state ([sim_random (1, 10)])
 init_state ["data-value"] = initialize_state (div_ls ([100] + [1000]))
-init_state ["staking-enthusiasm"] = initialize_state (div_ls ([bound_norm_random (sim_rng, 0, 25)] + [100]))
+init_state ["staking-enthusiasm"] = initialize_state (div_ls ([sim_random (0, 25)] + [100]))
 init_state ["money-growth-rate"] = initialize_state (1.0)
 init_state ["crypto-hype"] = initialize_state (25)
 init_state ["interlock-hype"] = initialize_state (1)
-init_state ["token-profit"] = initialize_state ([bound_norm_random (sim_rng, 0, 100)])
-init_state ["airlock-lookup-price"] = initialize_state ([bound_norm_random (sim_rng, 1, 50)])
+init_state ["token-profit"] = initialize_state ([sim_random (0, 100)])
+init_state ["airlock-lookup-price"] = initialize_state ([sim_random (1, 50)])
 init_state ["airlock-expenses"] = initialize_state (40229)
 init_state ["token-price"] = initialize_state (1.2)
-init_state ["expectation"] = initialize_state ([bound_norm_random (sim_rng, -2, 2)])
+init_state ["expectation"] = initialize_state ([sim_random (-2, 2)])
 init_state ["scam-upkeep"] = initialize_state (0)
 init_state ["scam-profits"] = initialize_state (0)
 init_state ["potential-scam-profits"] = initialize_state (20000000000)
@@ -1868,7 +1914,6 @@ init_state ["token-hold-rate"] = initialize_state (0)
 init_state ["token-mint-reward-rate"] = initialize_state (0)
 init_state ["token-mint-supply-rate"] = initialize_state (0)
 indicators_and_flows = {}
-indicators_and_flows ["order-book"] = s_update_order_book
 indicators_and_flows ["heuristic-innovation"] = s_update_heuristic_innovation
 indicators_and_flows ["scammer-innovation"] = s_update_scammer_innovation
 indicators_and_flows ["scam-profits-per-page"] = s_update_scam_profits_per_page
@@ -1990,3 +2035,4 @@ exec_res = simulation.execute ()
 sim_events = exec_res [0]
 sim_res = pd.DataFrame (sim_events)
 sim_res = sim_res.applymap (tuple_to_value)
+
