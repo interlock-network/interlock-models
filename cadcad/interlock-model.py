@@ -960,6 +960,30 @@ class Aggregation:
 
 
 
+def what_if_contradicts_max_total_stake_policy (what_if, max_total_stake_policy):
+    return all_true ([not (what_if == const_base_what_if and max_total_stake_policy == const_halving), not (what_if == const_base_what_if and max_total_stake_policy == const_doubling)])
+
+
+def what_if_contradicts_token_reward_policy (what_if, token_reward_policy):
+    return all_true ([not (what_if == const_base_what_if and token_reward_policy == const_trickle), not (what_if == const_base_what_if and token_reward_policy == const_halted)])
+
+
+def what_if_contradicts_token_reward_price_normalization (what_if, token_reward_price_normalization):
+    return all_true ([not (what_if == const_base_what_if and token_reward_price_normalization == const_yes)])
+
+
+def what_if_contradicts_heuristic_innovation_scenario (what_if, heuristic_innovation_scenario):
+    return all_true ([not (what_if == const_base_what_if and heuristic_innovation_scenario == const_industrialized), not (what_if == const_base_what_if and heuristic_innovation_scenario == const_leading), not (what_if == const_base_what_if and heuristic_innovation_scenario == const_lagging), not (what_if == const_base_what_if and heuristic_innovation_scenario == const_terminal)])
+
+
+def what_if_contradicts_airlock_lookup_policy (what_if, airlock_lookup_policy):
+    return all_true ([not (what_if == const_base_what_if and airlock_lookup_policy == const_above_cost), not (what_if == const_base_what_if and airlock_lookup_policy == const_below_cost)])
+
+
+def what_if_contradicts_stake_yield_policy (what_if, stake_yield_policy):
+    return all_true ([not (what_if == const_base_what_if and stake_yield_policy == const_at_market), not (what_if == const_base_what_if and stake_yield_policy == const_above_market)])
+
+
 def choose_agg_ls (agg, keep):
     summage = 0
     i = 0
@@ -1122,6 +1146,16 @@ def aggregate (agg_orig, keys):
     
 
 
+def all_true (ls):
+    test = True
+    for b in ls:
+        if b == False:
+            return False
+        
+
+    return True
+
+
 def any_true (ls):
     test = False
     for b in ls:
@@ -1135,7 +1169,8 @@ def any_true (ls):
 def generate_params ():
     morph.addVariable ("stake-yield-policy", [const_at_market, const_above_market, const_below_market])
     morph.addVariable ("airlock-lookup-policy", [const_at_cost, const_above_cost, const_below_cost])
-    morph.addVariable ("heuristic-innovation-scenario", [const_holding])
+    morph.addVariable ("heuristic-innovation-scenario", [const_industrialized, const_leading, const_holding, const_lagging, const_terminal])
+    morph.addVariable ("what-if", [const_base_what_if])
     morph.addVariable ("token-valuation", [const_half_value])
     morph.addVariable ("token-reward-price-normalization", [const_no])
     morph.addVariable ("token-reward-policy", [const_firehose, const_trickle, const_halted])
@@ -1143,6 +1178,12 @@ def generate_params ():
     morph.addVariable ("max-total-stake-policy", [const_egalitarian, const_halving, const_doubling])
     morph.addVariable ("expectation-chain", [const_observed_expectation_chain_id])
     morph.addVariable ("money-growth", [const_observed_money_growth_id])
+    morph.addConstraint (what_if_contradicts_max_total_stake_policy, ("what-if", "max-total-stake-policy"))
+    morph.addConstraint (what_if_contradicts_token_reward_policy, ("what-if", "token-reward-policy"))
+    morph.addConstraint (what_if_contradicts_token_reward_price_normalization, ("what-if", "token-reward-price-normalization"))
+    morph.addConstraint (what_if_contradicts_heuristic_innovation_scenario, ("what-if", "heuristic-innovation-scenario"))
+    morph.addConstraint (what_if_contradicts_airlock_lookup_policy, ("what-if", "airlock-lookup-policy"))
+    morph.addConstraint (what_if_contradicts_stake_yield_policy, ("what-if", "stake-yield-policy"))
     sol = morph.getSolutions ()
     ret = {}
     for ht in sol:
@@ -1502,6 +1543,7 @@ def adjust_all_flows (_params, substep, sH, s, _input, **kwargs):
     return "flow-adjustments", flow_adjustments
 
 
+const_base_what_if = 0
 const_industrialized = 2
 const_leading = 1
 const_holding = 0
@@ -1641,7 +1683,7 @@ def s_update_token_price (_params, substep, sH, s, _input, **kwargs):
     s_intr_investments_updates_token_price (ctx, s)
     s_money_supply_updates_token_price (ctx, s)
     s_expectation_updates_token_price (ctx, s)
-    token_price = min_ls ([60] + max_ls ([0.01] + div_ls (sum_ls (mul_ls (get_new_value (s, "token-price") + ctx.get ("expectation-multiplier") + [4]) + mul_ls (get_new_value (s, "token-price") + ctx.get ("invest-price-growth")) + mul_ls (get_new_value (s, "token-price") + ctx.get ("supply-price-growth"))) + [6])))
+    token_price = min_ls ([60] + max_ls ([0.01] + div_ls (sum_ls (mul_ls (get_new_value (s, "token-price") + ctx.get ("expectation-multiplier") + [4]) + mul_ls (get_new_value (s, "token-price") + ctx.get ("invest-price-growth")) + mul_ls (get_new_value (s, "token-price") + [1] if eq_ls ([_params ["supply-perception"]] + [const_supply_filling]) [0] else ctx.get ("supply-price-growth"))) + [6])))
     return "token-price", update_state (s, "token-price", token_price)
 
 
