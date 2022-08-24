@@ -256,7 +256,7 @@ def s_token_reward_to_supply_rate_updates_airlock_adoption_rate (ctx, s):
         ctx ["rewards-supply"] = []
     
     rewards_supply = ctx.get ("rewards-supply")
-    new_val = div_ls (get_new_value (s, "token-reward-to-supply-rate") + get_new_value (s, "airlock-users"))
+    new_val = div_ls_safe (get_new_value (s, "token-reward-to-supply-rate") + get_new_value (s, "airlock-users"))
     append_each (rewards_supply, new_val)
 
 def s_token_reward_to_held_rate_updates_airlock_adoption_rate (ctx, s):
@@ -264,7 +264,7 @@ def s_token_reward_to_held_rate_updates_airlock_adoption_rate (ctx, s):
         ctx ["rewards-held"] = []
     
     rewards_held = ctx.get ("rewards-held")
-    new_val = div_ls (get_new_value (s, "token-reward-to-held-rate") + get_new_value (s, "airlock-users"))
+    new_val = div_ls_safe (get_new_value (s, "token-reward-to-held-rate") + get_new_value (s, "airlock-users"))
     append_each (rewards_held, new_val)
 
 def s_token_reward_to_supply_rate_updates_airlock_abandonment_rate (ctx, s):
@@ -272,7 +272,7 @@ def s_token_reward_to_supply_rate_updates_airlock_abandonment_rate (ctx, s):
         ctx ["rewards-supply"] = []
     
     rewards_supply = ctx.get ("rewards-supply")
-    new_val = div_ls (get_old_value (s, "token-reward-to-supply-rate") + get_new_value (s, "token-reward-to-supply-rate"))
+    new_val = div_ls_safe (get_old_value (s, "token-reward-to-supply-rate") + get_new_value (s, "token-reward-to-supply-rate"))
     append_each (rewards_supply, new_val)
 
 def s_token_reward_to_held_rate_updates_airlock_abandonment_rate (ctx, s):
@@ -280,7 +280,7 @@ def s_token_reward_to_held_rate_updates_airlock_abandonment_rate (ctx, s):
         ctx ["rewards-held"] = []
     
     rewards_held = ctx.get ("rewards-held")
-    new_val = div_ls (get_old_value (s, "token-reward-to-held-rate") + get_new_value (s, "token-reward-to-held-rate"))
+    new_val = div_ls_safe (get_old_value (s, "token-reward-to-held-rate") + get_new_value (s, "token-reward-to-held-rate"))
     append_each (rewards_held, new_val)
 
 def s_commit_token_reward_to_supply_rate (_params, substep, sH, s, _input, **kwargs):
@@ -436,7 +436,7 @@ def s_token_supply_updates_token_price (ctx, s):
         ctx ["supply-price-growth"] = []
     
     supply_price_growth = ctx.get ("supply-price-growth")
-    new_val = div_ls (get_old_value (s, "token-supply") + get_new_value (s, "token-supply"))
+    new_val = div_ls_safe (get_old_value (s, "token-supply") + get_new_value (s, "token-supply"))
     append_each (supply_price_growth, new_val)
 
 def s_intr_investments_updates_token_price (ctx, s):
@@ -452,7 +452,7 @@ def s_token_price_updates_token_profit (ctx, s):
         ctx ["price-delta-pct"] = []
     
     price_delta_pct = ctx.get ("price-delta-pct")
-    new_val = div_ls (get_new_value (s, "token-price") + get_old_value (s, "token-price"))
+    new_val = div_ls_safe (get_new_value (s, "token-price") + get_old_value (s, "token-price"))
     append_each (price_delta_pct, new_val)
 
 def s_token_price_updates_airlock_lookup_price (ctx, s):
@@ -460,7 +460,7 @@ def s_token_price_updates_airlock_lookup_price (ctx, s):
         ctx ["price-delta-pct"] = []
     
     price_delta_pct = ctx.get ("price-delta-pct")
-    new_val = div_ls (get_new_value (s, "token-price") + get_old_value (s, "token-price"))
+    new_val = div_ls_safe (get_new_value (s, "token-price") + get_old_value (s, "token-price"))
     append_each (price_delta_pct, new_val)
 
 def s_airlock_lookup_price_updates_intr_invest_rate (ctx, s):
@@ -476,7 +476,7 @@ def s_token_price_updates_intr_invest_rate (ctx, s):
         ctx ["price-delta-pct"] = []
     
     price_delta_pct = ctx.get ("price-delta-pct")
-    new_val = div_ls (get_old_value (s, "token-price") + get_new_value (s, "token-price"))
+    new_val = div_ls_safe (get_old_value (s, "token-price") + get_new_value (s, "token-price"))
     append_each (price_delta_pct, new_val)
 
 def s_token_price_updates_token_reward_to_supply_rate (ctx, s):
@@ -484,7 +484,7 @@ def s_token_price_updates_token_reward_to_supply_rate (ctx, s):
         ctx ["price-delta-pct"] = []
     
     price_delta_pct = ctx.get ("price-delta-pct")
-    new_val = div_ls (get_new_value (s, "token-price") + get_old_value (s, "token-price"))
+    new_val = div_ls_safe (get_new_value (s, "token-price") + get_old_value (s, "token-price"))
     append_each (price_delta_pct, new_val)
 
 def s_token_price_updates_token_reward_to_held_rate (ctx, s):
@@ -492,7 +492,7 @@ def s_token_price_updates_token_reward_to_held_rate (ctx, s):
         ctx ["price-delta-pct"] = []
     
     price_delta_pct = ctx.get ("price-delta-pct")
-    new_val = div_ls (get_new_value (s, "token-price") + get_old_value (s, "token-price"))
+    new_val = div_ls_safe (get_new_value (s, "token-price") + get_old_value (s, "token-price"))
     append_each (price_delta_pct, new_val)
 
 def s_token_price_updates_airlock_adoption_rate (ctx, s):
@@ -516,7 +516,7 @@ def s_token_profit_updates_intr_divest_rate (ctx, s):
         ctx ["profit-delta-pct"] = []
     
     profit_delta_pct = ctx.get ("profit-delta-pct")
-    new_val = div_ls (get_new_value (s, "token-profit") + get_old_value (s, "token-profit"))
+    new_val = div_ls_safe (get_new_value (s, "token-profit") + get_old_value (s, "token-profit"))
     append_each (profit_delta_pct, new_val)
 
 def s_stake_yield_updates_token_reward_to_held_rate (ctx, s):
@@ -875,7 +875,7 @@ def s_heuristic_contradictions_updates_airlock_abandonment_rate (ctx, s):
         ctx ["contradiction-delta"] = []
     
     contradiction_delta = ctx.get ("contradiction-delta")
-    new_val = div_ls (get_new_value (s, "heuristic-contradictions") + get_old_value (s, "heuristic-contradictions"))
+    new_val = div_ls_safe (get_new_value (s, "heuristic-contradictions") + get_old_value (s, "heuristic-contradictions"))
     append_each (contradiction_delta, new_val)
 
 def s_heuristic_contradictions_updates_grey_area_entity_rate (ctx, s):
@@ -1135,9 +1135,9 @@ def any_true (ls):
 def generate_params ():
     morph.addVariable ("stake-yield-policy", [const_at_market, const_above_market, const_below_market])
     morph.addVariable ("airlock-lookup-policy", [const_at_cost, const_above_cost, const_below_cost])
-    morph.addVariable ("heuristic-innovation-scenario", [const_industrialized, const_leading, const_holding, const_lagging, const_terminal])
+    morph.addVariable ("heuristic-innovation-scenario", [const_holding])
     morph.addVariable ("token-valuation", [const_half_value])
-    morph.addVariable ("token-reward-price-normalization", [const_yes, const_no])
+    morph.addVariable ("token-reward-price-normalization", [const_no])
     morph.addVariable ("token-reward-policy", [const_firehose, const_trickle, const_halted])
     morph.addVariable ("supply-perception", [const_supply_expansion, const_supply_filling])
     morph.addVariable ("max-total-stake-policy", [const_egalitarian, const_halving, const_doubling])
@@ -1466,13 +1466,13 @@ def show_columns ():
 
 
 def plot_lines (data, x_vars, y_vars):
-    fig = px.line (data, x=x_vars, y=y_vars, facet_row='simulation', facet_col='run', height=800, template='seaborn')
+    fig = px.line (data, x=x_vars, y=y_vars, facet_col='run', facet_col_wrap=3, height=8000, facet_row_spacing=0.006, template='seaborn')
     fig.update_layout (margin=dict(l=20, r=20, t=20, b=20),)
     return fig
 
 
 def plot_log_lines (data, x_vars, y_vars):
-    fig = px.line (data, x=x_vars, y=y_vars, log_y=True, facet_row='simulation', facet_col='run', height=800, template='seaborn')
+    fig = px.line (data, x=x_vars, y=y_vars, log_y=True, facet_col='run', facet_col_wrap=3, height=8000, facet_row_spacing=0.006, template='seaborn')
     fig.update_layout (margin=dict(l=20, r=20, t=20, b=20),)
     return fig
 
