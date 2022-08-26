@@ -427,12 +427,28 @@ def s_money_supply_updates_crypto_hype (ctx, s):
     new_val = div_ls (get_new_value (s, "money-supply") + get_old_value (s, "money-supply"))
     append_each (extra_cash_growth, new_val)
 
+def s_token_hold_pool_updates_avg_token_value (ctx, s):
+    if ctx.get ("held") == None:
+        ctx ["held"] = []
+    
+    held = ctx.get ("held")
+    new_val = get_new_value (s, "token-hold-pool")
+    append_each (held, new_val)
+
+def s_intr_investments_updates_avg_token_value (ctx, s):
+    if ctx.get ("invested") == None:
+        ctx ["invested"] = []
+    
+    invested = ctx.get ("invested")
+    new_val = get_new_value (s, "intr-investments")
+    append_each (invested, new_val)
+
 def s_token_sell_pool_updates_token_price (ctx, s):
     if ctx.get ("sell-pool-growth") == None:
         ctx ["sell-pool-growth"] = []
     
     sell_pool_growth = ctx.get ("sell-pool-growth")
-    new_val = [0] if eq_ls (div_ls_safe (get_new_value (s, "token-sell-pool") + get_old_value (s, "token-sell-pool")) + [1]) [0] else [1] if gt_ls (div_ls_safe (get_new_value (s, "token-sell-pool") + get_old_value (s, "token-sell-pool")) + [1]) [0] else [-1]
+    new_val = [0] if any_in_range (div_ls_safe (get_new_value (s, "token-sell-pool") + get_old_value (s, "token-sell-pool")) + [0.96] + [1.04]) [0] else [1] if gt_ls (div_ls_safe (get_new_value (s, "token-sell-pool") + get_old_value (s, "token-sell-pool")) + [1]) [0] else [-1]
     append_each (sell_pool_growth, new_val)
 
 def s_intr_investments_updates_token_price (ctx, s):
@@ -440,7 +456,7 @@ def s_intr_investments_updates_token_price (ctx, s):
         ctx ["investment-pool-growth"] = []
     
     investment_pool_growth = ctx.get ("investment-pool-growth")
-    new_val = [0] if eq_ls (div_ls_safe (get_new_value (s, "intr-investments") + get_old_value (s, "intr-investments")) + [1]) [0] else [1] if gt_ls (div_ls_safe (get_new_value (s, "intr-investments") + get_old_value (s, "intr-investments")) + [1]) [0] else [-1]
+    new_val = [0] if any_in_range (div_ls_safe (get_new_value (s, "intr-investments") + get_old_value (s, "intr-investments")) + [0.96] + [1.04]) [0] else [1] if gt_ls (div_ls_safe (get_new_value (s, "intr-investments") + get_old_value (s, "intr-investments")) + [1]) [0] else [-1]
     append_each (investment_pool_growth, new_val)
 
 def s_token_price_updates_token_profit (ctx, s):
@@ -1181,6 +1197,23 @@ def all_true (ls):
     return True
 
 
+def any_in_range (ls):
+    if len (ls) < 3:
+        return [0]
+    
+    ultimate = (len (ls) - 1)
+    penultimate = (len (ls) - 2)
+    r1 = ls [ultimate]
+    r2 = ls [penultimate]
+    vals = ls [:penultimate]
+    for val in vals:
+        if (val >= min (r1, r2) and val <= max (r1, r2)):
+            return [1]
+        
+
+    return [0]
+
+
 def any_true (ls):
     test = False
     for b in ls:
@@ -1713,6 +1746,14 @@ def s_update_token_price (_params, substep, sH, s, _input, **kwargs):
     return "token-price", update_state (s, "token-price", token_price)
 
 
+def s_update_avg_token_value (_params, substep, sH, s, _input, **kwargs):
+    ctx = {}
+    s_token_hold_pool_updates_avg_token_value (ctx, s)
+    s_intr_investments_updates_avg_token_value (ctx, s)
+    avg_token_value = min_ls ([500000] + max_ls ([1] + div_ls_safe (ctx.get ("invested") + ctx.get ("held"))))
+    return "avg-token-value", update_state (s, "avg-token-value", avg_token_value)
+
+
 def s_update_expectation (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     expectation = min_ls ([2] + max_ls ([-2] + agg_choose (agg_cols ([[1], [2]], agg_rows ([[get_new_value (s, "expectation")]], [const_observed_expectation_chain] if eq_ls ([_params ["expectation-chain"]] + [const_observed_expectation_chain_id]) [0] else [-999])), [0])))
@@ -1941,6 +1982,7 @@ init_state ["token-profit"] = initialize_state ([sim_random (0, 100)])
 init_state ["airlock-lookup-price"] = initialize_state ([sim_random (1, 50)])
 init_state ["airlock-expenses"] = initialize_state (40229)
 init_state ["token-price"] = initialize_state (1.2)
+init_state ["avg-token-value"] = initialize_state (1)
 init_state ["expectation"] = initialize_state ([sim_random (-2, 2)])
 init_state ["scam-upkeep"] = initialize_state (0)
 init_state ["scam-profits"] = initialize_state (0)
@@ -2013,6 +2055,7 @@ indicators_and_flows ["token-profit"] = s_update_token_profit
 indicators_and_flows ["airlock-lookup-price"] = s_update_airlock_lookup_price
 indicators_and_flows ["airlock-expenses"] = s_update_airlock_expenses
 indicators_and_flows ["token-price"] = s_update_token_price
+indicators_and_flows ["avg-token-value"] = s_update_avg_token_value
 indicators_and_flows ["expectation"] = s_update_expectation
 indicators_and_flows ["scam-upkeep-rate"] = s_update_scam_upkeep_rate
 indicators_and_flows ["scam-profit-rate"] = s_update_scam_profit_rate
