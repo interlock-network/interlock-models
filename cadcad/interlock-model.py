@@ -10,7 +10,151 @@ from cadCAD.configuration.utils import bound_norm_random, config_sim, time_step,
 from cadCAD.configuration import Experiment
 from cadCAD.engine import ExecutionMode, ExecutionContext
 from cadCAD.engine import Executor
-def s_expectation_updates_staking_enthusiasm (ctx, s):
+def s_token_price_updates_swing_order_book (ctx, s):
+    if ctx.get ("buy-price") == None:
+        ctx ["buy-price"] = []
+    
+    buy_price = ctx.get ("buy-price")
+    new_val = get_new_value (s, "token-price")
+    append_each (buy_price, new_val)
+
+def s_token_price_updates_position_order_book (ctx, s):
+    if ctx.get ("buy-price") == None:
+        ctx ["buy-price"] = []
+    
+    buy_price = ctx.get ("buy-price")
+    new_val = get_new_value (s, "token-price")
+    append_each (buy_price, new_val)
+
+def s_token_price_updates_investor_order_book (ctx, s):
+    if ctx.get ("buy-price") == None:
+        ctx ["buy-price"] = []
+    
+    buy_price = ctx.get ("buy-price")
+    new_val = get_new_value (s, "token-price")
+    append_each (buy_price, new_val)
+
+def s_token_price_updates_hodler_order_book (ctx, s):
+    if ctx.get ("buy-price") == None:
+        ctx ["buy-price"] = []
+    
+    buy_price = ctx.get ("buy-price")
+    new_val = get_new_value (s, "token-price")
+    append_each (buy_price, new_val)
+
+def s_clock_updates_swing_order_book (ctx, s):
+    if ctx.get ("sell-time") == None:
+        ctx ["sell-time"] = []
+    
+    sell_time = ctx.get ("sell-time")
+    new_val = sum_ls ([1] + get_new_value (s, "clock"))
+    append_each (sell_time, new_val)
+
+def s_clock_updates_position_order_book (ctx, s):
+    if ctx.get ("sell-time") == None:
+        ctx ["sell-time"] = []
+    
+    sell_time = ctx.get ("sell-time")
+    new_val = sum_ls ([2] + get_new_value (s, "clock"))
+    append_each (sell_time, new_val)
+
+def s_clock_updates_investor_order_book (ctx, s):
+    if ctx.get ("sell-time") == None:
+        ctx ["sell-time"] = []
+    
+    sell_time = ctx.get ("sell-time")
+    new_val = sum_ls ([4] + get_new_value (s, "clock"))
+    append_each (sell_time, new_val)
+
+def s_clock_updates_hodler_order_book (ctx, s):
+    if ctx.get ("sell-time") == None:
+        ctx ["sell-time"] = []
+    
+    sell_time = ctx.get ("sell-time")
+    new_val = sum_ls ([100] + get_new_value (s, "clock"))
+    append_each (sell_time, new_val)
+
+def s_token_hold_rate_updates_swing_order_book (ctx, s):
+    if ctx.get ("quantity") == None:
+        ctx ["quantity"] = []
+    
+    quantity = ctx.get ("quantity")
+    new_val = mul_ls ([_params ["swing-traders"]] + get_new_value (s, "token-hold-rate"))
+    append_each (quantity, new_val)
+
+def s_token_hold_rate_updates_position_order_book (ctx, s):
+    if ctx.get ("quantity") == None:
+        ctx ["quantity"] = []
+    
+    quantity = ctx.get ("quantity")
+    new_val = mul_ls ([_params ["position-traders"]] + get_new_value (s, "token-hold-rate"))
+    append_each (quantity, new_val)
+
+def s_token_hold_rate_updates_investor_order_book (ctx, s):
+    if ctx.get ("quantity") == None:
+        ctx ["quantity"] = []
+    
+    quantity = ctx.get ("quantity")
+    new_val = mul_ls ([_params ["investors"]] + get_new_value (s, "token-hold-rate"))
+    append_each (quantity, new_val)
+
+def s_token_hold_rate_updates_hodler_order_book (ctx, s):
+    if ctx.get ("quantity") == None:
+        ctx ["quantity"] = []
+    
+    quantity = ctx.get ("quantity")
+    new_val = mul_ls ([_params ["hodlers"]] + get_new_value (s, "token-hold-rate"))
+    append_each (quantity, new_val)
+
+def s_swing_order_book_updates_swing_order_book (ctx, s):
+    if ctx.get ("removable") == None:
+        ctx ["removable"] = []
+    
+    removable = ctx.get ("removable")
+    new_val = agg_rows_range ([[LessThanEq (mul_ls (get_new_value (s, "token-price") + diff_ls ([1] + [_params ["minimum-trade-profit"]]))), LessThanEq (get_new_value (s, "clock"))]], get_new_value (s, "swing-order-book"))
+    append_each (removable, new_val)
+
+def s_position_order_book_updates_position_order_book (ctx, s):
+    if ctx.get ("removable") == None:
+        ctx ["removable"] = []
+    
+    removable = ctx.get ("removable")
+    new_val = agg_rows_range ([[LessThanEq (mul_ls (get_new_value (s, "token-price") + diff_ls ([1] + [_params ["minimum-trade-profit"]]))), LessThanEq (get_new_value (s, "clock"))]], get_new_value (s, "position-order-book"))
+    append_each (removable, new_val)
+
+def s_investor_order_book_updates_investor_order_book (ctx, s):
+    if ctx.get ("removable") == None:
+        ctx ["removable"] = []
+    
+    removable = ctx.get ("removable")
+    new_val = agg_rows_range ([[LessThanEq (mul_ls (get_new_value (s, "token-price") + diff_ls ([1] + [_params ["minimum-trade-profit"]]))), LessThanEq (get_new_value (s, "clock"))]], get_new_value (s, "investor-order-book"))
+    append_each (removable, new_val)
+
+def s_swing_order_book_updates_token_unhold_rate (ctx, s):
+    if ctx.get ("quantity") == None:
+        ctx ["quantity"] = []
+    
+    quantity = ctx.get ("quantity")
+    new_val = sum_ls (agg_to_list (agg_cols ([[2]], agg_rows_range ([[LessThanEq (mul_ls (get_new_value (s, "token-price") + diff_ls ([1] + [_params ["minimum-trade-profit"]]))), LessThanEq (get_new_value (s, "clock"))]], get_new_value (s, "swing-order-book")))))
+    append_each (quantity, new_val)
+
+def s_position_order_book_updates_token_unhold_rate (ctx, s):
+    if ctx.get ("quantity") == None:
+        ctx ["quantity"] = []
+    
+    quantity = ctx.get ("quantity")
+    new_val = sum_ls (agg_to_list (agg_cols ([[2]], agg_rows_range ([[LessThanEq (mul_ls (get_new_value (s, "token-price") + diff_ls ([1] + [_params ["minimum-trade-profit"]]))), LessThanEq (get_new_value (s, "clock"))]], get_new_value (s, "position-order-book")))))
+    append_each (quantity, new_val)
+
+def s_investor_order_book_updates_token_unhold_rate (ctx, s):
+    if ctx.get ("quantity") == None:
+        ctx ["quantity"] = []
+    
+    quantity = ctx.get ("quantity")
+    new_val = sum_ls (agg_to_list (agg_cols ([[2]], agg_rows_range ([[LessThanEq (mul_ls (get_new_value (s, "token-price") + diff_ls ([1] + [_params ["minimum-trade-profit"]]))), LessThanEq (get_new_value (s, "clock"))]], get_new_value (s, "investor-order-book")))))
+    append_each (quantity, new_val)
+
+def s_crypto_hype_updates_staking_enthusiasm (ctx, s):
     if ctx.get ("expectation-multiplier") == None:
         ctx ["expectation-multiplier"] = []
     
@@ -18,21 +162,13 @@ def s_expectation_updates_staking_enthusiasm (ctx, s):
     new_val = [4] if lt_eq_ls (get_new_value (s, "expectation") + [0]) [0] else [1]
     append_each (expectation_multiplier, new_val)
 
-def s_expectation_updates_token_price (ctx, s):
-    if ctx.get ("expectation-multiplier") == None:
-        ctx ["expectation-multiplier"] = []
-    
-    expectation_multiplier = ctx.get ("expectation-multiplier")
-    new_val = [1] if eq_ls (get_new_value (s, "expectation") + [const_stag]) [0] else diff_ls ([1] + div_ls ([sim_random (1, 10)] + [100])) if eq_ls (get_new_value (s, "expectation") + [const_bigup]) [0] else diff_ls ([1] + div_ls ([sim_random (11, 20)] + [100])) if eq_ls (get_new_value (s, "expectation") + [const_bigdip]) [0] else sum_ls ([1] + div_ls ([sim_random (1, 10)] + [100])) if eq_ls (get_new_value (s, "expectation") + [const_up]) [0] else sum_ls ([1] + div_ls ([sim_random (11, 20)] + [100])) if eq_ls (get_new_value (s, "expectation") + [const_bigup]) [0] else [-100]
-    append_each (expectation_multiplier, new_val)
-
 def s_crypto_hype_updates_interlock_hype (ctx, s):
-    if ctx.get ("crypto-hype-growth") == None:
-        ctx ["crypto-hype-growth"] = []
+    if ctx.get ("crypto-hype") == None:
+        ctx ["crypto-hype"] = []
     
-    crypto_hype_growth = ctx.get ("crypto-hype-growth")
+    crypto_hype = ctx.get ("crypto-hype")
     new_val = div_ls (get_new_value (s, "crypto-hype") + get_old_value (s, "crypto-hype"))
-    append_each (crypto_hype_growth, new_val)
+    append_each (crypto_hype, new_val)
 
 def s_crypto_hype_updates_crypto_invest_rate (ctx, s):
     if ctx.get ("crypto-hype-growth") == None:
@@ -51,12 +187,12 @@ def s_crypto_hype_updates_crypto_divest_rate (ctx, s):
     append_each (crypto_hype_growth, new_val)
 
 def s_interlock_hype_updates_intr_invest_rate (ctx, s):
-    if ctx.get ("crypto-hype-growth") == None:
-        ctx ["crypto-hype-growth"] = []
+    if ctx.get ("crypto-hype-mult") == None:
+        ctx ["crypto-hype-mult"] = []
     
-    crypto_hype_growth = ctx.get ("crypto-hype-growth")
+    crypto_hype_mult = ctx.get ("crypto-hype-mult")
     new_val = div_ls (get_new_value (s, "interlock-hype") + get_old_value (s, "interlock-hype"))
-    append_each (crypto_hype_growth, new_val)
+    append_each (crypto_hype_mult, new_val)
 
 def s_interlock_hype_updates_intr_divest_rate (ctx, s):
     if ctx.get ("crypto-hype-growth") == None:
@@ -120,7 +256,7 @@ def s_adjust_token_sell_pool_outflow (s, flow_adjustments):
     
     flow_adjustments ["token-hold-rate"] = flow_val
 
-def s_aggregate_token_sell_pool (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_token_sell_pool (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "token-reward-to-sell-rate") + get_new_value (s, "token-unhold-rate") + get_new_value (s, "token-mint-supply-rate"))
     return "token-sell-pool", update_state (s, "token-sell-pool", sum_ls (get_new_value (s, "token-sell-pool") + agg))
 
@@ -145,7 +281,7 @@ def s_adjust_token_rewards_pool_outflow (s, flow_adjustments):
         flow_adjustments [f] = flow_val
 
 
-def s_aggregate_token_rewards_pool (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_token_rewards_pool (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "token-mint-reward-rate"))
     return "token-rewards-pool", update_state (s, "token-rewards-pool", sum_ls (get_new_value (s, "token-rewards-pool") + agg))
 
@@ -162,7 +298,7 @@ def s_adjust_token_stake_pool_outflow (s, flow_adjustments):
     
     flow_adjustments ["token-unstake-rate"] = flow_val
 
-def s_aggregate_token_stake_pool (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_token_stake_pool (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "token-stake-rate"))
     return "token-stake-pool", update_state (s, "token-stake-pool", sum_ls (get_new_value (s, "token-stake-pool") + agg))
 
@@ -187,7 +323,7 @@ def s_adjust_token_hold_pool_outflow (s, flow_adjustments):
         flow_adjustments [f] = flow_val
 
 
-def s_aggregate_token_hold_pool (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_token_hold_pool (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "token-reward-to-held-rate") + get_new_value (s, "token-unstake-rate") + get_new_value (s, "token-hold-rate") + get_new_value (s, "token-mint-hold-rate"))
     return "token-hold-pool", update_state (s, "token-hold-pool", sum_ls (get_new_value (s, "token-hold-pool") + agg))
 
@@ -325,7 +461,7 @@ def s_adjust_money_supply_outflow (s, flow_adjustments):
         flow_adjustments [f] = flow_val
 
 
-def s_aggregate_money_supply (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_money_supply (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "crypto-divest-rate") + get_new_value (s, "money-mint-rate"))
     return "money-supply", update_state (s, "money-supply", sum_ls (get_new_value (s, "money-supply") + agg))
 
@@ -333,7 +469,7 @@ def s_reduce_money_supply (_params, substep, sH, s, _input, **kwargs):
     red = sum_ls (get_new_value (s, "crypto-invest-rate") + get_new_value (s, "money-reclaim-rate"))
     return "money-supply", update_state (s, "money-supply", diff_ls (get_new_value (s, "money-supply") + red))
 
-def s_aggregate_money_reclaimed (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_money_reclaimed (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "money-reclaim-rate"))
     return "money-reclaimed", update_state (s, "money-reclaimed", sum_ls (get_new_value (s, "money-reclaimed") + agg))
 
@@ -354,7 +490,7 @@ def s_adjust_crypto_investments_outflow (s, flow_adjustments):
         flow_adjustments [f] = flow_val
 
 
-def s_aggregate_crypto_investments (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_crypto_investments (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "intr-divest-rate") + get_new_value (s, "crypto-invest-rate"))
     return "crypto-investments", update_state (s, "crypto-investments", sum_ls (get_new_value (s, "crypto-investments") + agg))
 
@@ -371,7 +507,7 @@ def s_adjust_intr_investments_outflow (s, flow_adjustments):
     
     flow_adjustments ["intr-divest-rate"] = flow_val
 
-def s_aggregate_intr_investments (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_intr_investments (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "intr-invest-rate"))
     return "intr-investments", update_state (s, "intr-investments", sum_ls (get_new_value (s, "intr-investments") + agg))
 
@@ -411,14 +547,6 @@ def s_intr_investments_updates_token_hold_rate (ctx, s):
     new_val = max_ls (diff_ls (get_new_value (s, "intr-investments") + get_old_value (s, "intr-investments")) + [0])
     append_each (invested, new_val)
 
-def s_intr_investments_updates_token_unhold_rate (ctx, s):
-    if ctx.get ("uninvested") == None:
-        ctx ["uninvested"] = []
-    
-    uninvested = ctx.get ("uninvested")
-    new_val = max_ls (diff_ls (get_old_value (s, "intr-investments") + get_new_value (s, "intr-investments")) + [0])
-    append_each (uninvested, new_val)
-
 def s_money_supply_updates_crypto_hype (ctx, s):
     if ctx.get ("extra-cash-growth") == None:
         ctx ["extra-cash-growth"] = []
@@ -444,20 +572,20 @@ def s_intr_investments_updates_avg_token_value (ctx, s):
     append_each (invested, new_val)
 
 def s_token_sell_pool_updates_token_price (ctx, s):
-    if ctx.get ("sell-pool-growth") == None:
-        ctx ["sell-pool-growth"] = []
+    if ctx.get ("sell-pool") == None:
+        ctx ["sell-pool"] = []
     
-    sell_pool_growth = ctx.get ("sell-pool-growth")
-    new_val = [0] if any_in_range (div_ls_safe (get_new_value (s, "token-sell-pool") + get_old_value (s, "token-sell-pool")) + [0.96] + [1.04]) [0] else [1] if gt_ls (div_ls_safe (get_new_value (s, "token-sell-pool") + get_old_value (s, "token-sell-pool")) + [1]) [0] else [-1]
-    append_each (sell_pool_growth, new_val)
+    sell_pool = ctx.get ("sell-pool")
+    new_val = get_new_value (s, "token-sell-pool")
+    append_each (sell_pool, new_val)
 
 def s_intr_investments_updates_token_price (ctx, s):
-    if ctx.get ("investment-pool-growth") == None:
-        ctx ["investment-pool-growth"] = []
+    if ctx.get ("invest-pool") == None:
+        ctx ["invest-pool"] = []
     
-    investment_pool_growth = ctx.get ("investment-pool-growth")
-    new_val = [0] if any_in_range (div_ls_safe (get_new_value (s, "intr-investments") + get_old_value (s, "intr-investments")) + [0.96] + [1.04]) [0] else [1] if gt_ls (div_ls_safe (get_new_value (s, "intr-investments") + get_old_value (s, "intr-investments")) + [1]) [0] else [-1]
-    append_each (investment_pool_growth, new_val)
+    invest_pool = ctx.get ("invest-pool")
+    new_val = get_new_value (s, "intr-investments")
+    append_each (invest_pool, new_val)
 
 def s_token_price_updates_token_profit (ctx, s):
     if ctx.get ("price-delta-pct") == None:
@@ -474,6 +602,22 @@ def s_token_price_updates_airlock_lookup_price (ctx, s):
     price_delta_pct = ctx.get ("price-delta-pct")
     new_val = div_ls_safe (get_new_value (s, "token-price") + get_old_value (s, "token-price"))
     append_each (price_delta_pct, new_val)
+
+def s_airlock_expenses_updates_airlock_lookup_price (ctx, s):
+    if ctx.get ("expenses") == None:
+        ctx ["expenses"] = []
+    
+    expenses = ctx.get ("expenses")
+    new_val = get_new_value (s, "airlock-expenses")
+    append_each (expenses, new_val)
+
+def s_airlock_lookup_price_updates_airlock_share_rate (ctx, s):
+    if ctx.get ("lookup-price") == None:
+        ctx ["lookup-price"] = []
+    
+    lookup_price = ctx.get ("lookup-price")
+    new_val = get_new_value (s, "airlock-lookup-price")
+    append_each (lookup_price, new_val)
 
 def s_airlock_lookup_price_updates_intr_invest_rate (ctx, s):
     if ctx.get ("lookup-price") == None:
@@ -561,7 +705,7 @@ def s_adjust_page_visits_outflow (s, flow_adjustments):
     
     flow_adjustments ["scam-page-visit-rate"] = flow_val
 
-def s_aggregate_page_visits (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_page_visits (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "page-visit-rate"))
     return "page-visits", update_state (s, "page-visits", sum_ls (get_new_value (s, "page-visits") + agg))
 
@@ -578,7 +722,7 @@ def s_adjust_airlock_lookups_outflow (s, flow_adjustments):
     
     flow_adjustments ["grey-area-entity-rate"] = flow_val
 
-def s_aggregate_airlock_lookups (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_airlock_lookups (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "airlock-lookup-rate"))
     return "airlock-lookups", update_state (s, "airlock-lookups", sum_ls (get_new_value (s, "airlock-lookups") + agg))
 
@@ -612,11 +756,11 @@ def s_reduce_browsing_data (_params, substep, sH, s, _input, **kwargs):
     red = sum_ls (get_new_value (s, "airlock-share-rate"))
     return "browsing-data", update_state (s, "browsing-data", diff_ls (get_new_value (s, "browsing-data") + red))
 
-def s_aggregate_airlock_data_shared (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_airlock_data_shared (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "airlock-share-rate"))
     return "airlock-data-shared", update_state (s, "airlock-data-shared", sum_ls (get_new_value (s, "airlock-data-shared") + agg))
 
-def s_aggregate_airlock_revenue (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_airlock_revenue (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "airlock-revenue-rate"))
     return "airlock-revenue", update_state (s, "airlock-revenue", sum_ls (get_new_value (s, "airlock-revenue") + agg))
 
@@ -642,7 +786,7 @@ def s_adjust_browser_users_outflow (s, flow_adjustments):
     
     flow_adjustments ["airlock-adoption-rate"] = flow_val
 
-def s_aggregate_browser_users (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_browser_users (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "airlock-abandonment-rate"))
     return "browser-users", update_state (s, "browser-users", sum_ls (get_new_value (s, "browser-users") + agg))
 
@@ -659,7 +803,7 @@ def s_adjust_airlock_users_outflow (s, flow_adjustments):
     
     flow_adjustments ["airlock-abandonment-rate"] = flow_val
 
-def s_aggregate_airlock_users (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_airlock_users (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "airlock-adoption-rate"))
     return "airlock-users", update_state (s, "airlock-users", sum_ls (get_new_value (s, "airlock-users") + agg))
 
@@ -676,7 +820,7 @@ def s_adjust_grey_area_entities_outflow (s, flow_adjustments):
     
     flow_adjustments ["resolution-rate"] = flow_val
 
-def s_aggregate_grey_area_entities (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_grey_area_entities (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "grey-area-entity-rate"))
     return "grey-area-entities", update_state (s, "grey-area-entities", sum_ls (get_new_value (s, "grey-area-entities") + agg))
 
@@ -684,7 +828,7 @@ def s_reduce_grey_area_entities (_params, substep, sH, s, _input, **kwargs):
     red = sum_ls (get_new_value (s, "resolution-rate"))
     return "grey-area-entities", update_state (s, "grey-area-entities", diff_ls (get_new_value (s, "grey-area-entities") + red))
 
-def s_aggregate_resolved_entities (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_resolved_entities (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "resolution-rate"))
     return "resolved-entities", update_state (s, "resolved-entities", sum_ls (get_new_value (s, "resolved-entities") + agg))
 
@@ -697,7 +841,7 @@ def s_adjust_scam_page_visits_outflow (s, flow_adjustments):
     
     flow_adjustments ["scam-page-success-rate"] = flow_val
 
-def s_aggregate_scam_page_visits (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_scam_page_visits (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "scam-page-visit-rate"))
     return "scam-page-visits", update_state (s, "scam-page-visits", sum_ls (get_new_value (s, "scam-page-visits") + agg))
 
@@ -705,7 +849,7 @@ def s_reduce_scam_page_visits (_params, substep, sH, s, _input, **kwargs):
     red = sum_ls (get_new_value (s, "scam-page-success-rate"))
     return "scam-page-visits", update_state (s, "scam-page-visits", diff_ls (get_new_value (s, "scam-page-visits") + red))
 
-def s_aggregate_scam_page_successes (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_scam_page_successes (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "scam-page-success-rate"))
     return "scam-page-successes", update_state (s, "scam-page-successes", sum_ls (get_new_value (s, "scam-page-successes") + agg))
 
@@ -731,7 +875,7 @@ def s_adjust_scam_profits_outflow (s, flow_adjustments):
     
     flow_adjustments ["scam-upkeep-rate"] = flow_val
 
-def s_aggregate_scam_profits (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_scam_profits (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "scam-profit-rate"))
     return "scam-profits", update_state (s, "scam-profits", sum_ls (get_new_value (s, "scam-profits") + agg))
 
@@ -739,7 +883,7 @@ def s_reduce_scam_profits (_params, substep, sH, s, _input, **kwargs):
     red = sum_ls (get_new_value (s, "scam-upkeep-rate"))
     return "scam-profits", update_state (s, "scam-profits", diff_ls (get_new_value (s, "scam-profits") + red))
 
-def s_aggregate_scam_upkeep (_params, substep, sH, s, _input, **kwargs):
+def s_cumulate_scam_upkeep (_params, substep, sH, s, _input, **kwargs):
     agg = sum_ls (get_new_value (s, "scam-upkeep-rate"))
     return "scam-upkeep", update_state (s, "scam-upkeep", sum_ls (get_new_value (s, "scam-upkeep") + agg))
 
@@ -823,6 +967,14 @@ def s_airlock_users_updates_scam_page_success_rate (ctx, s):
     new_val = div_ls (get_new_value (s, "airlock-users") + get_new_value (s, "browser-users"))
     append_each (user_share, new_val)
 
+def s_airlock_users_updates_airlock_lookup_price (ctx, s):
+    if ctx.get ("users") == None:
+        ctx ["users"] = []
+    
+    users = ctx.get ("users")
+    new_val = get_new_value (s, "airlock-users")
+    append_each (users, new_val)
+
 def s_page_visit_rate_updates_airlock_lookup_rate (ctx, s):
     if ctx.get ("pages-visited") == None:
         ctx ["pages-visited"] = []
@@ -839,7 +991,7 @@ def s_airlock_users_updates_airlock_lookup_rate (ctx, s):
     new_val = div_ls (get_new_value (s, "airlock-users") + get_new_value (s, "browser-users"))
     append_each (user_share, new_val)
 
-def s_airlock_data_shared_updates_token_reward_to_supply_rate (ctx, s):
+def s_airlock_data_shared_updates_token_reward_to_sell_rate (ctx, s):
     if ctx.get ("shared") == None:
         ctx ["shared"] = []
     
@@ -976,6 +1128,83 @@ def tuple_list_to_agg (ls):
     
 
 
+class Eq:
+    def __init__ (self, val):
+        self.val = val
+
+
+    def match (self, cval):
+        return self.val == cval
+
+
+
+
+class NotEq:
+    def __init__ (self, val):
+        self.val = val
+
+
+    def match (self, cval):
+        return not self.val == cval
+
+
+
+
+class Any:
+    def __init__ (self, val):
+        self.val = val
+
+
+    def match (self, cval):
+        return True
+
+
+
+
+class LessThanEq:
+    def __init__ (self, val):
+        self.val = val
+
+
+    def match (self, cval):
+        return self.val <= cval
+
+
+
+
+class GreaterThanEq:
+    def __init__ (self, val):
+        self.val = val
+
+
+    def match (self, cval):
+        return self.val >= cval
+
+
+
+
+class LessThan:
+    def __init__ (self, val):
+        self.val = val
+
+
+    def match (self, cval):
+        return self.val < cval
+
+
+
+
+class GreaterThan:
+    def __init__ (self, val):
+        self.val = val
+
+
+    def match (self, cval):
+        return self.val > cval
+
+
+
+
 class Aggregation:
     agg_stats = {}
     def __init__ (self, schema, agg, base=0, min_mag=0, max_mag=0, step=0):
@@ -1047,6 +1276,22 @@ def choose_agg_ls (agg, keep):
 
 
 
+def agg_to_list (agg):
+    tuples = agg_to_tuple_list (agg)
+    ret = []
+    for e in tuples:
+        for e2 in e:
+            ret.append (e2)
+
+
+    return ret
+
+
+def list_to_agg (ls, agg_type):
+    tuples = agg_to_tuple_list (agg)
+    ret = []
+
+
 def agg_to_tuple_list (agg):
     ret = []
     max_depth = len (agg.schema)
@@ -1108,6 +1353,10 @@ def agg_store (agg, path, val):
 
 
 
+def agg_col_to_list (col, agg_or_ls):
+    return
+
+
 def agg_cols (cols, agg_or_ls):
     if isinstance (agg_or_ls, list):
         agg = agg_or_ls [0]
@@ -1130,9 +1379,41 @@ def agg_cols (cols, agg_or_ls):
 
         found = agg_load (ret, new [:path_len])
         if found == None:
-            agg_store (ret, new [:path_len], new [path_len])
+            if path_len >= 2:
+                agg_store (ret, new [:path_len], new [path_len])
+            else:
+                agg_store (ret, new [:path_len], 1)
+            
         else:
-            agg_store (ret, new [:path_len], (found + new [path_len]))
+            if path_len >= 2:
+                agg_store (ret, new [:path_len], (found + new [path_len]))
+            else:
+                agg_store (ret, new [:path_len], (found + 1))
+            
+        
+
+    return ret
+
+
+def agg_rows_range (matches, agg_or_ls):
+    if isinstance (agg_or_ls, list):
+        agg = agg_or_ls [0]
+    else:
+        agg = agg_or_ls
+    
+    tuple_list = agg_to_tuple_list (agg)
+    ret = Aggregation (agg.schema, agg.agg, agg.base, agg.min_mag, agg.max_mag, agg.step)
+    for e in tuple_list:
+        path_len = len (e)
+        all_match = True
+        col = 0
+        for m in matches:
+            col_match = m.match (e [col])
+            all_match = (all_match and col_match)
+            col = (col + 1)
+
+        if all_match == True:
+            agg_store (ret, e [:path_len], e [path_len])
         
 
     return ret
@@ -1225,17 +1506,27 @@ def any_true (ls):
 
 
 def generate_params ():
+    morph.addVariable ("trader-demographics", [const_power_of_2_trader_distribution_id])
+    morph.addVariable ("swing-traders", [const_pow_2_swing_trader])
+    morph.addVariable ("position-traders", [const_pow_2_position_trader])
+    morph.addVariable ("investors", [const_pow_2_investor])
+    morph.addVariable ("hodlers", [const_pow_2_hodler])
+    morph.addVariable ("max-user-fee", [0, 1, 2, 3])
+    morph.addVariable ("max-lookup-fee", [0, 9.9e-5, 1.98e-4, 2.97e-4])
     morph.addVariable ("stake-yield-policy", [const_at_market, const_above_market, const_below_market])
     morph.addVariable ("airlock-lookup-policy", [const_at_cost, const_above_cost, const_below_cost])
     morph.addVariable ("heuristic-innovation-scenario", [const_industrialized, const_leading, const_holding, const_lagging, const_terminal])
     morph.addVariable ("what-if", [const_base_what_if])
-    morph.addVariable ("token-valuation", [const_half_value])
+    morph.addVariable ("token-valuation", [const_tenth_value, const_half_value])
     morph.addVariable ("token-reward-price-normalization", [const_no])
+    morph.addVariable ("airlock-lookup-price-normalization", [const_yes, const_no])
     morph.addVariable ("token-reward-policy", [const_firehose, const_trickle, const_halted])
     morph.addVariable ("supply-perception", [const_supply_expansion, const_supply_filling])
     morph.addVariable ("max-total-stake-policy", [const_egalitarian, const_halving, const_doubling])
     morph.addVariable ("expectation-chain", [const_observed_expectation_chain_id])
     morph.addVariable ("money-growth", [const_observed_money_growth_id])
+    morph.addVariable ("minimum-trade-profit", [0.01, 0.05, 0.1, 0.15, 0.2])
+    morph.addVariable ("free-loaders", [0.1, 0.2, 0.5, 0.8, 0.9])
     morph.addConstraint (what_if_contradicts_max_total_stake_policy, ("what-if", "max-total-stake-policy"))
     morph.addConstraint (what_if_contradicts_token_reward_policy, ("what-if", "token-reward-policy"))
     morph.addConstraint (what_if_contradicts_token_reward_price_normalization, ("what-if", "token-reward-price-normalization"))
@@ -1280,6 +1571,17 @@ def ceil_ls (ls):
     return ret_ls
 
 
+def neg_ls (ls):
+    if len (ls) == 0:
+        return []
+    
+    ret_ls = []
+    for n in ls:
+        ret_ls.append (-n)
+
+    return ret_ls
+
+
 def max_ls (ls):
     if len (ls) == 0:
         return []
@@ -1300,6 +1602,43 @@ def min_ls (ls):
         ret_val = min (ret_val, n)
 
     return [ret_val]
+
+
+def set_diff_agg (agg, agg2):
+    ret = Aggregation (agg.schema, agg.agg, agg.base, agg.min_mag, agg.max_mag, agg.step)
+    max_depth = len (agg.schema)
+    def insert_if_unique (tuple):
+        tlen = len (tuple)
+        found = agg_load (agg2, tup [:tlen])
+        if found == None:
+            agg_store (ret, tup [:tlen], tup [tlen])
+        
+
+
+    agg.agg_dict_walk (agg.root, insert_if_unique, max_depth, ())
+    return ret
+
+
+def set_diff_agg_eq (agg, agg2):
+    ret = Aggregation (agg.schema, agg.agg, agg.base, agg.min_mag, agg.max_mag, agg.step)
+    max_depth = len (agg.schema)
+    def insert_if_unique (tuple):
+        tlen = len (tuple)
+        found = agg_load (agg2, tup [:tlen])
+        if found == None:
+            agg_store (ret, tup [:tlen], tup [tlen])
+        elif found == tup [tlen]:
+            agg_store (ret, tup [:tlen], tup [tlen])
+        
+
+
+    agg.agg_dict_walk (agg.root, insert_if_unique, max_depth, ())
+    return ret
+
+
+def arith_diff_agg (agg, agg2):
+    ret = Aggregation (agg.schema, agg.agg, agg.base, agg.min_mag, agg.max_mag, agg.step)
+    return ret
 
 
 def diff_ls (ls):
@@ -1602,6 +1941,17 @@ def adjust_all_flows (_params, substep, sH, s, _input, **kwargs):
     return "flow-adjustments", flow_adjustments
 
 
+const_power_of_2_trader_distribution_id = 2
+const_pow_2_swing_trader = 0.5
+const_pow_2_position_trader = 0.25
+const_pow_2_investor = 0.125
+const_pow_2_hodler = 0.125
+const_day_trader = 1
+const_swing_trader = 2
+const_position_trader = 3
+const_diversified_investor = 4
+const_hodler = 5
+const_power_of_2_trader_distribution = agg_store_records (Aggregation (["type"], "count"), [[[const_day_trader], 8], [[const_swing_trader], 4], [[const_position_trader], 2], [[const_diversified_investor], 1], [[const_hodler], 1]])
 const_base_what_if = 0
 const_industrialized = 2
 const_leading = 1
@@ -1611,6 +1961,7 @@ const_terminal = -2
 const_no = 0
 const_yes = 1
 const_half_value = 0.5
+const_tenth_value = 0.1
 const_firehose = 2
 const_trickle = 1
 const_halted = 0
@@ -1627,16 +1978,55 @@ const_bigup = 2
 const_at_market = 0
 const_below_market = -1
 const_above_market = 1
-const_at_cost = 0
-const_below_cost = -1
-const_above_cost = 1
-const_price_movement = agg_store_records (Aggregation (["sell", "buy", "mul", "count"], "count"), [[1, -1, 0.8, 1], [0, -1, 0.9, 1], [1, 0, 0.9, 1], [1, 1, 1.0, 1], [-1, -1, 1.0, 1], [0, 0, 1.0, 1], [0, 1, 1.1, 1], [-1, 0, 1.1, 1], [-1, 1, 1.2, 1]])
+const_at_cost = 1
+const_below_cost = 0.7
+const_above_cost = 1.3
+const_price_movement = agg_store_records (Aggregation (["sell", "buy", "mul"], "count"), [[1, -1, 0.8, 1], [0, -1, 0.9, 1], [1, 0, 0.9, 1], [1, 1, 1.0, 1], [-1, -1, 1.0, 1], [0, 0, 1.0, 1], [0, 1, 1.1, 1], [-1, 0, 1.1, 1], [-1, 1, 1.2, 1]])
 const_observed_money_growth = agg_store_records (Aggregation (["mult"], "count"), [[0.988, 1], [0.991, 2], [0.992, 2], [0.993, 5], [0.994, 7], [0.995, 10], [0.997, 38], [0.998, 80], [0.999, 124], [1.0, 145], [1.001, 127], [1.002, 105], [1.003, 68], [1.004, 35], [1.005, 27], [1.006, 29], [1.007, 12], [1.008, 4], [1.009, 2], [1.01, 3], [1.017, 1]])
 const_observed_expectation_chain_id = 0
 const_observed_money_growth_id = 0
 const_observed_expectation_chain = agg_store_records (Aggregation (["in", "out"], "count"), [[[const_bigdip], [const_bigup], 1], [[const_bigdip], [const_dip], 1], [[const_bigdip], [const_up], 6], [[const_dip], [const_bigup], 1], [[const_dip], [const_bigdip], 6], [[const_dip], [const_dip], 7], [[const_dip], [const_up], 10], [[const_stag], [const_bigup], 1], [[const_stag], [const_stag], 1], [[const_stag], [const_dip], 3], [[const_up], [const_bigdip], 2], [[const_up], [const_stag], 3], [[const_up], [const_bigup], 5], [[const_up], [const_dip], 9], [[const_up], [const_up], 11], [[const_bigup], [const_stag], 1], [[const_bigup], [const_up], 4], [[const_bigup], [const_dip], 4], [[const_bigup], [const_bigup], 5]])
 const_buy = 0
 const_sell = 1
+def s_update_hodler_order_book (_params, substep, sH, s, _input, **kwargs):
+    ctx = {}
+    s_token_hold_rate_updates_hodler_order_book (ctx, s)
+    s_clock_updates_hodler_order_book (ctx, s)
+    s_token_price_updates_hodler_order_book (ctx, s)
+    hodler_order_book = aggregate (set_diff_agg (get_new_value (s, "hodler-order-book"), ctx.get ("removable")), [ctx.get ("buy-price"), ctx.get ("sell-time"), ctx.get ("quantity")])
+    return "hodler-order-book", update_state (s, "hodler-order-book", hodler_order_book)
+
+
+def s_update_investor_order_book (_params, substep, sH, s, _input, **kwargs):
+    ctx = {}
+    s_investor_order_book_updates_investor_order_book (ctx, s)
+    s_token_hold_rate_updates_investor_order_book (ctx, s)
+    s_clock_updates_investor_order_book (ctx, s)
+    s_token_price_updates_investor_order_book (ctx, s)
+    investor_order_book = aggregate (set_diff_agg (get_new_value (s, "investor-order-book"), ctx.get ("removable")), [ctx.get ("buy-price"), ctx.get ("sell-time"), ctx.get ("quantity")])
+    return "investor-order-book", update_state (s, "investor-order-book", investor_order_book)
+
+
+def s_update_position_order_book (_params, substep, sH, s, _input, **kwargs):
+    ctx = {}
+    s_position_order_book_updates_position_order_book (ctx, s)
+    s_token_hold_rate_updates_position_order_book (ctx, s)
+    s_clock_updates_position_order_book (ctx, s)
+    s_token_price_updates_position_order_book (ctx, s)
+    position_order_book = aggregate (set_diff_agg (get_new_value (s, "position-order-book"), ctx.get ("removable")), [ctx.get ("buy-price"), ctx.get ("sell-time"), ctx.get ("quantity")])
+    return "position-order-book", update_state (s, "position-order-book", position_order_book)
+
+
+def s_update_swing_order_book (_params, substep, sH, s, _input, **kwargs):
+    ctx = {}
+    s_swing_order_book_updates_swing_order_book (ctx, s)
+    s_token_hold_rate_updates_swing_order_book (ctx, s)
+    s_clock_updates_swing_order_book (ctx, s)
+    s_token_price_updates_swing_order_book (ctx, s)
+    swing_order_book = aggregate (set_diff_agg (get_new_value (s, "swing-order-book"), ctx.get ("removable")), [ctx.get ("buy-price"), ctx.get ("sell-time"), ctx.get ("quantity")])
+    return "swing-order-book", update_state (s, "swing-order-book", swing_order_book)
+
+
 def s_update_heuristic_innovation (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_heuristic_contradictions_updates_heuristic_innovation (ctx, s)
@@ -1692,7 +2082,7 @@ def s_update_data_value (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_staking_enthusiasm (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    s_expectation_updates_staking_enthusiasm (ctx, s)
+    s_crypto_hype_updates_staking_enthusiasm (ctx, s)
     staking_enthusiasm = min_ls ([100] + max_ls ([0] + mul_ls (ctx.get ("expectation-multiplier") + div_ls ([sim_random (5, 25)] + [100]))))
     return "staking-enthusiasm", update_state (s, "staking-enthusiasm", staking_enthusiasm)
 
@@ -1703,17 +2093,10 @@ def s_update_money_growth_rate (_params, substep, sH, s, _input, **kwargs):
     return "money-growth-rate", update_state (s, "money-growth-rate", money_growth_rate)
 
 
-def s_update_crypto_hype (_params, substep, sH, s, _input, **kwargs):
-    ctx = {}
-    s_money_supply_updates_crypto_hype (ctx, s)
-    crypto_hype = min_ls ([100] + max_ls ([1] + mul_ls (get_new_value (s, "crypto-hype") + ctx.get ("extra-cash-growth"))))
-    return "crypto-hype", update_state (s, "crypto-hype", crypto_hype)
-
-
 def s_update_interlock_hype (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_crypto_hype_updates_interlock_hype (ctx, s)
-    interlock_hype = min_ls ([100] + max_ls ([1] + mul_ls (get_new_value (s, "interlock-hype") + ctx.get ("crypto-hype-growth"))))
+    interlock_hype = min_ls ([1] + max_ls ([-1] + mul_ls (get_new_value (s, "interlock-hype") + ctx.get ("crypto-hype-growth"))))
     return "interlock-hype", update_state (s, "interlock-hype", interlock_hype)
 
 
@@ -1726,8 +2109,10 @@ def s_update_token_profit (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_airlock_lookup_price (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
+    s_airlock_users_updates_airlock_lookup_price (ctx, s)
     s_token_price_updates_airlock_lookup_price (ctx, s)
-    airlock_lookup_price = min_ls ([50] + max_ls ([1] + div_ls (get_new_value (s, "airlock-lookup-price") + ctx.get ("price-delta-pct"))))
+    s_airlock_expenses_updates_airlock_lookup_price (ctx, s)
+    airlock_lookup_price = min_ls ([5] + max_ls ([0] + div_ls (min_ls (div_ls (mul_ls (ctx.get ("expenses") + [_params ["airlock-lookup-policy"]]) + ctx.get ("users")) + [_params ["max-user-fee"]])) + [1] if eq_ls ([const_no] + [_params ["airlock-lookup-price-normalization"]]) [0] else ctx.get ("price-delta-pct")))
     return "airlock-lookup-price", update_state (s, "airlock-lookup-price", airlock_lookup_price)
 
 
@@ -1741,8 +2126,7 @@ def s_update_token_price (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_token_sell_pool_updates_token_price (ctx, s)
     s_intr_investments_updates_token_price (ctx, s)
-    s_expectation_updates_token_price (ctx, s)
-    token_price = min_ls ([60] + max_ls ([0.01] + mul_ls (get_new_value (s, "token-price") + agg_choose (agg_cols ([[2], [3]], agg_rows ([[ctx.get ("sell-pool-growth"), ctx.get ("investment-pool-growth")]], [const_price_movement])), [0]))))
+    token_price = min_ls ([60] + max_ls ([0.01] + div_ls (ctx.get ("invest-pool") + ctx.get ("sell-pool"))))
     return "token-price", update_state (s, "token-price", token_price)
 
 
@@ -1754,10 +2138,17 @@ def s_update_avg_token_value (_params, substep, sH, s, _input, **kwargs):
     return "avg-token-value", update_state (s, "avg-token-value", avg_token_value)
 
 
-def s_update_expectation (_params, substep, sH, s, _input, **kwargs):
+def s_update_crypto_hype (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    expectation = min_ls ([2] + max_ls ([-2] + agg_choose (agg_cols ([[1], [2]], agg_rows ([[get_new_value (s, "expectation")]], [const_observed_expectation_chain] if eq_ls ([_params ["expectation-chain"]] + [const_observed_expectation_chain_id]) [0] else [-999])), [0])))
-    return "expectation", update_state (s, "expectation", expectation)
+    s_money_supply_updates_crypto_hype (ctx, s)
+    crypto_hype = min_ls ([2] + max_ls ([-2] + agg_choose (agg_cols ([[1], [2]], agg_rows ([[get_new_value (s, "crypto-hype")]], [const_observed_expectation_chain] if eq_ls ([_params ["expectation-chain"]] + [const_observed_expectation_chain_id]) [0] else [-999])), [0])))
+    return "crypto-hype", update_state (s, "crypto-hype", crypto_hype)
+
+
+def s_update_clock (_params, substep, sH, s, _input, **kwargs):
+    ctx = {}
+    clock = min_ls ([1000000] + max_ls ([0] + sum_ls ([1] + get_new_value (s, "clock"))))
+    return "clock", update_state (s, "clock", clock)
 
 
 def s_update_scam_upkeep_rate (_params, substep, sH, s, _input, **kwargs):
@@ -1804,8 +2195,9 @@ def s_update_airlock_revenue_rate (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_airlock_share_rate (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
+    s_airlock_lookup_price_updates_airlock_share_rate (ctx, s)
     s_airlock_users_updates_airlock_share_rate (ctx, s)
-    airlock_share_rate = mul_ls (ctx.get ("user-share") + get_new_value (s, "browsing-data"))
+    airlock_share_rate = mul_ls (mul_ls (ctx.get ("user-share") + get_new_value (s, "browsing-data")) + diff_ls ([1] + [_params ["free-loaders"]]) if gt_ls (ctx.get ("lookup-price") + [0]) [0] else [0])
     return "airlock-share-rate", update_state (s, "airlock-share-rate", airlock_share_rate)
 
 
@@ -1909,6 +2301,7 @@ def s_update_token_reward_to_held_rate (_params, substep, sH, s, _input, **kwarg
 def s_update_token_reward_to_sell_rate (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_token_price_updates_token_reward_to_sell_rate (ctx, s)
+    s_airlock_data_shared_updates_token_reward_to_sell_rate (ctx, s)
     s_data_value_updates_token_reward_to_sell_rate (ctx, s)
     token_reward_to_sell_rate = div_ls (get_new_value (s, "token-rewards-pool") + [2])
     return "token-reward-to-sell-rate", update_state (s, "token-reward-to-sell-rate", token_reward_to_sell_rate)
@@ -1932,7 +2325,9 @@ def s_update_token_stake_rate (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_token_unhold_rate (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    s_intr_investments_updates_token_unhold_rate (ctx, s)
+    s_investor_order_book_updates_token_unhold_rate (ctx, s)
+    s_position_order_book_updates_token_unhold_rate (ctx, s)
+    s_swing_order_book_updates_token_unhold_rate (ctx, s)
     token_unhold_rate = sum_ls (div_ls (ctx.get ("uninvested") + get_new_value (s, "token-price")))
     return "token-unhold-rate", update_state (s, "token-unhold-rate", token_unhold_rate)
 
@@ -1966,6 +2361,10 @@ def s_update_token_mint_supply_rate (_params, substep, sH, s, _input, **kwargs):
 cfg = config_sim ({ "N": 1, "T": range (100), "M": generate_params () })
 init_state = {}
 init_state ["flow-adjustments"] = {}
+init_state ["hodler-order-book"] = initialize_state (Aggregation (["buy-price", "sell-time", "quantity"], "sum"))
+init_state ["investor-order-book"] = initialize_state (Aggregation (["buy-price", "sell-time", "quantity"], "sum"))
+init_state ["position-order-book"] = initialize_state (Aggregation (["buy-price", "sell-time", "quantity"], "sum"))
+init_state ["swing-order-book"] = initialize_state (Aggregation (["buy-price", "sell-time", "quantity"], "sum"))
 init_state ["heuristic-innovation"] = initialize_state ([sim_random (0, 100)])
 init_state ["scammer-innovation"] = initialize_state ([sim_random (0, 100)])
 init_state ["scam-profits-per-page"] = initialize_state ([sim_random (1, 100)])
@@ -1976,14 +2375,14 @@ init_state ["heuristic-contradictions"] = initialize_state ([sim_random (1, 10)]
 init_state ["data-value"] = initialize_state (div_ls ([100] + [1000]))
 init_state ["staking-enthusiasm"] = initialize_state (div_ls ([sim_random (0, 25)] + [100]))
 init_state ["money-growth-rate"] = initialize_state (1.0)
-init_state ["crypto-hype"] = initialize_state (25)
-init_state ["interlock-hype"] = initialize_state (1)
+init_state ["interlock-hype"] = initialize_state (0)
 init_state ["token-profit"] = initialize_state ([sim_random (0, 100)])
-init_state ["airlock-lookup-price"] = initialize_state ([sim_random (1, 50)])
+init_state ["airlock-lookup-price"] = initialize_state (0)
 init_state ["airlock-expenses"] = initialize_state (40229)
 init_state ["token-price"] = initialize_state (1.2)
 init_state ["avg-token-value"] = initialize_state (1)
-init_state ["expectation"] = initialize_state ([sim_random (-2, 2)])
+init_state ["crypto-hype"] = initialize_state ([sim_random (-2, 2)])
+init_state ["clock"] = initialize_state (0)
 init_state ["scam-upkeep"] = initialize_state (0)
 init_state ["scam-profits"] = initialize_state (0)
 init_state ["potential-scam-profits"] = initialize_state (20000000000)
@@ -2039,6 +2438,10 @@ init_state ["token-mint-reward-rate"] = initialize_state (0)
 init_state ["token-mint-hold-rate"] = initialize_state (0)
 init_state ["token-mint-supply-rate"] = initialize_state (0)
 indicators_and_flows = {}
+indicators_and_flows ["hodler-order-book"] = s_update_hodler_order_book
+indicators_and_flows ["investor-order-book"] = s_update_investor_order_book
+indicators_and_flows ["position-order-book"] = s_update_position_order_book
+indicators_and_flows ["swing-order-book"] = s_update_swing_order_book
 indicators_and_flows ["heuristic-innovation"] = s_update_heuristic_innovation
 indicators_and_flows ["scammer-innovation"] = s_update_scammer_innovation
 indicators_and_flows ["scam-profits-per-page"] = s_update_scam_profits_per_page
@@ -2049,14 +2452,14 @@ indicators_and_flows ["heuristic-contradictions"] = s_update_heuristic_contradic
 indicators_and_flows ["data-value"] = s_update_data_value
 indicators_and_flows ["staking-enthusiasm"] = s_update_staking_enthusiasm
 indicators_and_flows ["money-growth-rate"] = s_update_money_growth_rate
-indicators_and_flows ["crypto-hype"] = s_update_crypto_hype
 indicators_and_flows ["interlock-hype"] = s_update_interlock_hype
 indicators_and_flows ["token-profit"] = s_update_token_profit
 indicators_and_flows ["airlock-lookup-price"] = s_update_airlock_lookup_price
 indicators_and_flows ["airlock-expenses"] = s_update_airlock_expenses
 indicators_and_flows ["token-price"] = s_update_token_price
 indicators_and_flows ["avg-token-value"] = s_update_avg_token_value
-indicators_and_flows ["expectation"] = s_update_expectation
+indicators_and_flows ["crypto-hype"] = s_update_crypto_hype
+indicators_and_flows ["clock"] = s_update_clock
 indicators_and_flows ["scam-upkeep-rate"] = s_update_scam_upkeep_rate
 indicators_and_flows ["scam-profit-rate"] = s_update_scam_profit_rate
 indicators_and_flows ["scam-page-success-rate"] = s_update_scam_page_success_rate
@@ -2136,28 +2539,28 @@ stock_reduction ["token-stake-pool"] = s_reduce_token_stake_pool
 stock_reduction ["token-hold-pool"] = s_reduce_token_hold_pool
 stock_reduction ["token-sell-pool"] = s_reduce_token_sell_pool
 stock_reduction ["token-mint"] = s_reduce_token_mint
-stock_aggregation = {}
-stock_aggregation ["scam-upkeep"] = s_aggregate_scam_upkeep
-stock_aggregation ["scam-profits"] = s_aggregate_scam_profits
-stock_aggregation ["scam-page-successes"] = s_aggregate_scam_page_successes
-stock_aggregation ["scam-page-visits"] = s_aggregate_scam_page_visits
-stock_aggregation ["page-visits"] = s_aggregate_page_visits
-stock_aggregation ["airlock-revenue"] = s_aggregate_airlock_revenue
-stock_aggregation ["airlock-data-shared"] = s_aggregate_airlock_data_shared
-stock_aggregation ["resolved-entities"] = s_aggregate_resolved_entities
-stock_aggregation ["grey-area-entities"] = s_aggregate_grey_area_entities
-stock_aggregation ["airlock-lookups"] = s_aggregate_airlock_lookups
-stock_aggregation ["browser-users"] = s_aggregate_browser_users
-stock_aggregation ["airlock-users"] = s_aggregate_airlock_users
-stock_aggregation ["intr-investments"] = s_aggregate_intr_investments
-stock_aggregation ["crypto-investments"] = s_aggregate_crypto_investments
-stock_aggregation ["money-supply"] = s_aggregate_money_supply
-stock_aggregation ["money-reclaimed"] = s_aggregate_money_reclaimed
-stock_aggregation ["token-stake-pool"] = s_aggregate_token_stake_pool
-stock_aggregation ["token-rewards-pool"] = s_aggregate_token_rewards_pool
-stock_aggregation ["token-hold-pool"] = s_aggregate_token_hold_pool
-stock_aggregation ["token-sell-pool"] = s_aggregate_token_sell_pool
-psubs = [{ "policies": {}, "variables": indicators_and_flows }, { "policies": {}, "variables": stock_driven_flow_adjust }, { "policies": {}, "variables": flow_commit }, { "policies": {}, "variables": stock_reduction }, { "policies": {}, "variables": stock_aggregation }]
+stock_cumulation = {}
+stock_cumulation ["scam-upkeep"] = s_cumulate_scam_upkeep
+stock_cumulation ["scam-profits"] = s_cumulate_scam_profits
+stock_cumulation ["scam-page-successes"] = s_cumulate_scam_page_successes
+stock_cumulation ["scam-page-visits"] = s_cumulate_scam_page_visits
+stock_cumulation ["page-visits"] = s_cumulate_page_visits
+stock_cumulation ["airlock-revenue"] = s_cumulate_airlock_revenue
+stock_cumulation ["airlock-data-shared"] = s_cumulate_airlock_data_shared
+stock_cumulation ["resolved-entities"] = s_cumulate_resolved_entities
+stock_cumulation ["grey-area-entities"] = s_cumulate_grey_area_entities
+stock_cumulation ["airlock-lookups"] = s_cumulate_airlock_lookups
+stock_cumulation ["browser-users"] = s_cumulate_browser_users
+stock_cumulation ["airlock-users"] = s_cumulate_airlock_users
+stock_cumulation ["intr-investments"] = s_cumulate_intr_investments
+stock_cumulation ["crypto-investments"] = s_cumulate_crypto_investments
+stock_cumulation ["money-supply"] = s_cumulate_money_supply
+stock_cumulation ["money-reclaimed"] = s_cumulate_money_reclaimed
+stock_cumulation ["token-stake-pool"] = s_cumulate_token_stake_pool
+stock_cumulation ["token-rewards-pool"] = s_cumulate_token_rewards_pool
+stock_cumulation ["token-hold-pool"] = s_cumulate_token_hold_pool
+stock_cumulation ["token-sell-pool"] = s_cumulate_token_sell_pool
+psubs = [{ "policies": {}, "variables": indicators_and_flows }, { "policies": {}, "variables": stock_driven_flow_adjust }, { "policies": {}, "variables": flow_commit }, { "policies": {}, "variables": stock_reduction }, { "policies": {}, "variables": stock_cumulation }]
 exp = Experiment ()
 exp.append_model (initial_state=init_state, model_id='interlock-1', sim_configs=cfg, partial_state_update_blocks=psubs)
 exec_mode = ExecutionMode ()
