@@ -1545,6 +1545,7 @@ def generate_params ():
     morph.addVariable ("hodlers", [const_pow_2_hodler])
     morph.addVariable ("max-user-fee", [0, 1, 2, 3])
     morph.addVariable ("max-lookup-fee", [0, 9.9e-5, 1.98e-4, 2.97e-4])
+    morph.addVariable ("vesting-ratio", [0.1, 0.2, 0.5])
     morph.addVariable ("stake-yield-policy", [const_at_market, const_above_market, const_below_market])
     morph.addVariable ("airlock-lookup-policy", [const_at_cost, const_above_cost, const_below_cost])
     morph.addVariable ("heuristic-innovation-scenario", [const_industrialized, const_leading, const_holding, const_lagging, const_terminal])
@@ -2196,7 +2197,7 @@ def s_update_token_price (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_token_sell_pool_updates_token_price (ctx, s, _params)
     s_intr_investments_updates_token_price (ctx, s, _params)
-    token_price = min_ls ([60] + max_ls ([0.01] + div_ls (ctx.get ("invest-pool") + ctx.get ("sell-pool"))))
+    token_price = min_ls ([60] + max_ls ([0.01] + div_ls_safe (ctx.get ("invest-pool") + ctx.get ("sell-pool"))))
     return "token-price", update_state (s, "token-price", token_price)
 
 
@@ -2333,7 +2334,7 @@ def s_update_intr_invest_rate (_params, substep, sH, s, _input, **kwargs):
     s_airlock_lookup_rate_updates_intr_invest_rate (ctx, s, _params)
     s_airlock_lookup_price_updates_intr_invest_rate (ctx, s, _params)
     s_crypto_hype_updates_intr_invest_rate (ctx, s, _params)
-    intr_invest_rate = min_ls (mul_ls ([0.001] + get_new_value (s, "crypto-investments")) + sum_ls (mul_ls (get_new_value (s, "intr-investments") + agg_col_to_list (1, agg_rows ([[ctx.get ("crypto-hype")]], [const_invest_movement])) + [_params ["swing-traders"]]) if lt_eq_ls (price_delta_pct + [0.95]) [0] else [0] + mul_ls (get_new_value (s, "intr-investments") + agg_col_to_list (1, agg_rows ([[ctx.get ("crypto-hype")]], [const_invest_movement])) + [_params ["position-traders"]]) if gt_eq_ls (price_delta_pct + [1.05]) [0] else [0] + mul_ls (ctx.get ("lookups") + ctx.get ("lookup-price"))))
+    intr_invest_rate = min_ls (mul_ls ([0.001] + get_new_value (s, "crypto-investments")) + sum_ls (mul_ls (get_new_value (s, "intr-investments") + agg_col_to_list (1, agg_rows ([[ctx.get ("crypto-hype")]], [const_invest_movement])) + [_params ["swing-traders"]]) if lt_eq_ls (ctx.get ("price-delta-pct") + [0.95]) [0] else [0] + mul_ls (get_new_value (s, "intr-investments") + agg_col_to_list (1, agg_rows ([[ctx.get ("crypto-hype")]], [const_invest_movement])) + [_params ["position-traders"]]) if gt_eq_ls (ctx.get ("price-delta-pct") + [1.05]) [0] else [0] + mul_ls (ctx.get ("lookups") + ctx.get ("lookup-price"))))
     return "intr-invest-rate", update_state (s, "intr-invest-rate", intr_invest_rate)
 
 
@@ -2398,7 +2399,7 @@ def s_update_token_unhold_rate (_params, substep, sH, s, _input, **kwargs):
     s_investor_order_book_updates_token_unhold_rate (ctx, s, _params)
     s_position_order_book_updates_token_unhold_rate (ctx, s, _params)
     s_swing_order_book_updates_token_unhold_rate (ctx, s, _params)
-    token_unhold_rate = sum_ls (div_ls (ctx.get ("uninvested") + get_new_value (s, "token-price")))
+    token_unhold_rate = sum_ls (ctx.get ("quantity") + mul_ls (sum_ls ([833333] + [2701235] + [2666667] + [4166667] + [5555556] + [1666667] + [1041667]) + [_params ["vesting-ratio"]]))
     return "token-unhold-rate", update_state (s, "token-unhold-rate", token_unhold_rate)
 
 
@@ -2475,11 +2476,11 @@ init_state ["crypto-investments"] = initialize_state (18000000000)
 init_state ["money-reclaimed"] = initialize_state (0)
 init_state ["money-supply"] = initialize_state (10000000000)
 init_state ["money-mint"] = initialize_state (10000000000)
-init_state ["token-hold-pool"] = initialize_state (0)
+init_state ["token-hold-pool"] = initialize_state (188622222)
 init_state ["token-stake-pool"] = initialize_state (0)
 init_state ["token-rewards-pool"] = initialize_state (0)
 init_state ["token-sell-pool"] = initialize_state (0)
-init_state ["token-mint"] = initialize_state (1000000000)
+init_state ["token-mint"] = initialize_state (811377778)
 init_state ["scam-upkeep-rate"] = initialize_state (0)
 init_state ["scam-profit-rate"] = initialize_state (0)
 init_state ["scam-page-success-rate"] = initialize_state (0)
