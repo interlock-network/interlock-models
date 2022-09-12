@@ -18,7 +18,7 @@ to see which (if any) of the params might account for the difference.
 
 Here is a plot with adoption-rate and revenue-rate:
 
-![](./plots/newplot-6.png)
+![](../../plots/newplot-6.png)
 
 We can see that the adoption-rate varies from run to run, with some runs doing better than
 others. We know that this is not due to variance in randomness, because each run starts
@@ -57,7 +57,7 @@ better than 1 from a revenue point of view, in the left half (but declines
 gradually in the right half). What are the differences?
 
 
-![](./plots/newplot-6.png)
+![](../../plots/newplot-7.png)
 
 
 ```
