@@ -95,3 +95,58 @@ course those exact numbers might be wrong -- but it does suggest that we should
 figure out what the most realistic value for those numbers are).
 
 Anyway, it is late, and past my bed time. Will have more shorts in the future.
+
+APPENDIX:
+
+Here is the full parameterization for Run 1:
+
+```
+# The what-if scenario
+{'what-if': 0,
+# The lookup-policy is at-cost (we will lower the total price we charge if we do not need it to cover costs)
+ 'airlock-lookup-policy': 1,
+# We normalize the lookup-price (if token value doubles, tokens payed halves)
+ 'airlock-lookup-price-normalization': 1,
+# Half of all users will stop sharing data if price is not zero
+ 'free-loaders': 0.5,
+# We never lead or lag the heuristic contradictions
+ 'heuristic-innovation-scenario': 0,
+# We allow a maximum stake of 300 ILOCK per user
+ 'max-total-stake': 300,
+# UNUSED
+ 'max-total-stake-policy': 0,
+# UNUSED
+ 'stake-yield-policy': -1,
+# Rewards are "firehosed", we airdrop the maximum weekly reward budget
+ 'token-reward-policy': 2,
+# We do not normalize rewards based on price
+ 'token-reward-price-normalization': 0,
+# Half of all reward recievers sell immediately
+ 'token-reward-sellers': 0.5,
+# Token has value of 0.1$.
+ 'token-valuation': 0.1,
+# Investors sell at 20% the theoretical maximum
+ 'vesting-ratio': 0.2,
+# The maximum lookup fee
+ 'max-lookup-fee': 9.9e-05,
+# People will not sell before their token grows 5% in price
+ 'minimum-trade-profit': 0.05,
+# Per user fee of 2$ per week (8 per month)
+ 'max-user-fee': 2,
+# The markov chain that represents expectation-chages
+ 'expectation-chain': 0,
+# 12.5% of traders are HODLers
+ 'hodlers': 0.125,
+# 12.5% of traders are diversified investors
+ 'investors': 0.125,
+# Represents the money-growth probability distribution
+ 'money-growth': 0,
+# 25% of traders are position traders
+ 'position-traders': 0.25,
+# 50% of traders are swing-traders
+ 'swing-traders': 0.5,
+# The ID that represents a distribution for the aforementioned trader-types
+ 'trader-demographics': 2,
+# Supply is perceived by market as 'filling' not 'expanding'
+ 'supply-perception': 0}
+```
