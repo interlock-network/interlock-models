@@ -39,6 +39,9 @@ We see that the first run has a more favorable supply-perception (`filling` inst
 of `expanding`). This will of course affect the price significantly, which will affect
 the adoption-rate (which is calculate as being proportional to reward *times* price).
 
+Here is a plot with only the price visible:
+
+![](../../plots/newplot-8.png)
 
 Lets take a look at Run 2 and Run 4 which look very similar.
 
