@@ -221,7 +221,12 @@ Here are the plots.
 ![](../../plots/mad-2-change-intensities-buybacks.png)
 ![](../../plots/mad-2-price.png)
 
-**TODO: Add new model diagram**
+Here is the latest diagram of the model. In the center-area, you will find an indicator called `interlock-network`. This
+indicator encapsulates the decision matrix -- inbound arrows are stimuli, while outbound arrows are actions that change state.
+Also the indicator named `fitness` is the fitness variable, and it is influenced by only 2 values: `scam-page-successes` (which we ignore),
+and `token-price` (which we -- as mentioned above -- use as a denominator).
+
+![](../../graphs/mad-2-interlock-graph-layered.png)
 
 ## Other Interesting Results
 
