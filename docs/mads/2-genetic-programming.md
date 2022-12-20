@@ -238,4 +238,7 @@ demand for the security-staking.
 
 Aside from fixing the loopholes, we want to add more stimuli, and have a granularity greater than
 `[-1,0,1]`. Also, maybe -- if time allows -- test it against models of popular systems like Uniswap, to see
-if it will find bugs in it.
+if it will find bugs in it. Make it possible for Interlock's buybacks to be used in the rewards pool or sell-pool,
+(right now, we just buy and forget -- making it the equivalent of a burn). Make it possible to lose users
+as a function of either reward-rate or heuristic-contradictions (we have a new but unused parameter, that
+divides our users into security-nerds and crypo-nerds -- the proportions will affect the abandonment rate).
