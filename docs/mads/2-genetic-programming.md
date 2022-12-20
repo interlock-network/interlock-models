@@ -199,19 +199,28 @@ than it actually is. The user-goal-progress parameters do a lot of the heavy lif
 
 Some of the loopholes that we found include:
 
-  * a bug in how we calculate stake-yield, resulting in the yield-percent getting withdrawn instead of stake along with its yield
-  * deliberately stopped rewarding users when we hit 100M users
-  * would oscillate the reward-amount by tiny fractions of a token maximize growth-rate
-  * after fixing stake-yield bug, it figured out that -- since stake-yield is payed out from the rewards-pool stock, it can drain the stock, and pay effectively 0% yield, even though another part of the model presents the yield as 0.01%+, enticing users to stake their tokens instead of selling them
+  * a bug in how we calculate stake-yield, resulting in the yield-percent getting withdrawn instead of staked along with its yield
+  * deliberately stopped rewarding users when we hit 100M users (first plot and second plot)
+  * would oscillate the reward-amount by tiny fractions of a token maximize growth-rate (second plot)
+  * after fixing stake-yield bug, it figured out that -- since stake-yield is payed out from the rewards-pool stock, it can drain the stock, and pay effectively 0% yield, even though another part of the model presents the yield as 0.01%+, enticing users to stake their tokens instead of selling them (third plot)
+  * as we get more users, the price gradually goes up, and the stake-yield gradually goes down, which attracts users at the beginning at a loss, but more than makes up for it later, and uses that user money to do buybacks (fourth plot and fifth plot)
 
 All of these methods worked, and the token price was at 2.8$, after 200 weeks -- the highest it has ever been under the worst-case
-scenario-parameterization.
+scenario-parameterization (sixth plot).
 
 These results are encouraging, since it identifies (in around 10 minutes) where our model is flawed, and what
 we can do to fix it. More interestingly, we can probably use this method on other existing models to find
 flaws in them -- if there are any.
 
-**TODO: Add plots of these loopholes**
+Here are the plots.
+
+![](../../plots/mad-2-airlock-variables.png)
+![](../../plots/mad-2-reward-rate-jiggle.png)
+![](../../plots/mad-2-pools.png)
+![](../../plots/mad-2-change-intensities.png)
+![](../../plots/mad-2-change-intensities-buybacks.png)
+![](../../plots/mad-2-price.png)
+
 **TODO: Add new model diagram**
 
 ## Other Interesting Results
