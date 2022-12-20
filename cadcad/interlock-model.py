@@ -780,6 +780,22 @@ def s_token_profit_updates_intr_divest_rate (ctx, s, _params):
     new_val = div_ls (get_new_value (s, "token-profit") + get_old_value (s, "token-profit"))
     append_each (profit_delta_pct, new_val)
 
+def s_heuristics_updates_heuristic_contradictions (ctx, s, _params):
+    if ctx.get ("heur") == None:
+        ctx ["heur"] = []
+    
+    heur = ctx.get ("heur")
+    new_val = get_new_value (s, "heuristics")
+    append_each (heur, new_val)
+
+def s_anti_heuristics_updates_heuristic_contradictions (ctx, s, _params):
+    if ctx.get ("anti") == None:
+        ctx ["anti"] = []
+    
+    anti = ctx.get ("anti")
+    new_val = get_new_value (s, "anti-heuristics")
+    append_each (anti, new_val)
+
 def s_stake_yield_updates_token_reward_to_held_rate (ctx, s, _params):
     if ctx.get ("stake-yield") == None:
         ctx ["stake-yield"] = []
@@ -1057,7 +1073,7 @@ def s_change_lookup_fee_updates_airlock_lookup_price (ctx, s, _params):
     new_val = div_ls (mul_ls (get_new_value (s, "change-lookup-fee") + [3]) + [1000000]) if gt_ls (get_new_value (s, "change-lookup-fee") + [0]) [0] else [0]
     append_each (mul_lookup_fee, new_val)
 
-def s_change_user_fee_updates_airlock_lokup_price (ctx, s, _params):
+def s_change_user_fee_updates_airlock_lookup_price (ctx, s, _params):
     if ctx.get ("mul-user-fee") == None:
         ctx ["mul-user-fee"] = []
     
@@ -1133,13 +1149,21 @@ def s_commit_resolution_rate (_params, substep, sH, s, _input, **kwargs):
     adjusted_flows = s.get ("flow-adjustments")
     return "resolution-rate", update_state (s, "resolution-rate", [adjusted_flows ["resolution-rate"]])
 
-def s_resolved_entities_updates_token_unstake_rate (ctx, s, _params):
-    if ctx.get ("resolutions") == None:
-        ctx ["resolutions"] = []
+def s_staking_enthusiasm_updates_token_unstake_rate (ctx, s, _params):
+    if ctx.get ("enthusiasm") == None:
+        ctx ["enthusiasm"] = []
     
-    resolutions = ctx.get ("resolutions")
-    new_val = diff_ls (get_new_value (s, "resolved-entities") + get_old_value (s, "resolved-entities"))
-    append_each (resolutions, new_val)
+    enthusiasm = ctx.get ("enthusiasm")
+    new_val = get_old_value (s, "staking-enthusiasm")
+    append_each (enthusiasm, new_val)
+
+def s_staking_opportunities_updates_token_unstake_rate (ctx, s, _params):
+    if ctx.get ("staking-ops") == None:
+        ctx ["staking-ops"] = []
+    
+    staking_ops = ctx.get ("staking-ops")
+    new_val = get_old_value (s, "staking-opportunities")
+    append_each (staking_ops, new_val)
 
 def s_commit_airlock_share_rate (_params, substep, sH, s, _input, **kwargs):
     adjusted_flows = s.get ("flow-adjustments")
@@ -1164,6 +1188,22 @@ def s_commit_scam_page_visit_rate (_params, substep, sH, s, _input, **kwargs):
 def s_commit_scam_page_success_rate (_params, substep, sH, s, _input, **kwargs):
     adjusted_flows = s.get ("flow-adjustments")
     return "scam-page-success-rate", update_state (s, "scam-page-success-rate", [adjusted_flows ["scam-page-success-rate"]])
+
+def s_scam_page_successes_updates_fitness (ctx, s, _params):
+    if ctx.get ("scams") == None:
+        ctx ["scams"] = []
+    
+    scams = ctx.get ("scams")
+    new_val = get_new_value (s, "scam-page-successes")
+    append_each (scams, new_val)
+
+def s_token_price_updates_fitness (ctx, s, _params):
+    if ctx.get ("price") == None:
+        ctx ["price"] = []
+    
+    price = ctx.get ("price")
+    new_val = get_new_value (s, "token-price")
+    append_each (price, new_val)
 
 def s_scam_page_successes_updates_scam_profit_rate (ctx, s, _params):
     if ctx.get ("total-pages") == None:
@@ -1266,7 +1306,7 @@ def s_scam_page_success_rate_updates_scammer_innovation (ctx, s, _params):
         ctx ["urgency"] = []
     
     urgency = ctx.get ("urgency")
-    new_val = div_ls (get_old_value (s, "scam-page-success-rate") + max_ls ([1] + get_new_value (s, "scam-page-success-rate")))
+    new_val = [1] if lt_ls (div_ls (get_new_value (s, "scam-page-success-rate") + get_old_value (s, "scam-page-success-rate")) + [0.9]) [0] else [0]
     append_each (urgency, new_val)
 
 def s_scammer_innovation_updates_scam_upkeep_rate (ctx, s, _params):
@@ -1274,15 +1314,15 @@ def s_scammer_innovation_updates_scam_upkeep_rate (ctx, s, _params):
         ctx ["profit-diverted-to-innovate"] = []
     
     profit_diverted_to_innovate = ctx.get ("profit-diverted-to-innovate")
-    new_val = mul_ls (get_new_value (s, "scammer-innovation"))
+    new_val = mul_ls (get_new_value (s, "scammer-innovation") + [_params ["base-heuristic-cost"]])
     append_each (profit_diverted_to_innovate, new_val)
 
-def s_scammer_innovation_updates_heuristic_contradictions (ctx, s, _params):
+def s_scammer_innovation_updates_anti_heuristics (ctx, s, _params):
     if ctx.get ("innovation") == None:
         ctx ["innovation"] = []
     
     innovation = ctx.get ("innovation")
-    new_val = sum_ls (get_new_value (s, "heuristic-contradictions") + mul_ls (div_ls ([sim_random (1, 50, s ["run"])] + [100]) + get_new_value (s, "heuristic-contradictions") + get_new_value (s, "scammer-innovation")))
+    new_val = get_new_value (s, "scammer-innovation")
     append_each (innovation, new_val)
 
 def s_heuristic_contradictions_updates_scam_page_success_rate (ctx, s, _params):
@@ -1290,7 +1330,7 @@ def s_heuristic_contradictions_updates_scam_page_success_rate (ctx, s, _params):
         ctx ["pass-through"] = []
     
     pass_through = ctx.get ("pass-through")
-    new_val = diff_ls ([1] + div_ls (get_new_value (s, "heuristic-contradictions") + [100]))
+    new_val = diff_ls ([1] + get_new_value (s, "heuristic-contradictions"))
     append_each (pass_through, new_val)
 
 def s_heuristic_contradictions_updates_airlock_abandonment_rate (ctx, s, _params):
@@ -1333,20 +1373,36 @@ def s_max_stake_updates_token_stake_rate (ctx, s, _params):
     new_val = get_new_value (s, "max-stake")
     append_each (max_per_entity, new_val)
 
+def s_max_stake_updates_token_unstake_rate (ctx, s, _params):
+    if ctx.get ("max-per-entity") == None:
+        ctx ["max-per-entity"] = []
+    
+    max_per_entity = ctx.get ("max-per-entity")
+    new_val = get_old_value (s, "max-stake")
+    append_each (max_per_entity, new_val)
+
 def s_heuristic_contradictions_updates_heuristic_innovation (ctx, s, _params):
     if ctx.get ("urgency") == None:
         ctx ["urgency"] = []
     
     urgency = ctx.get ("urgency")
-    new_val = get_new_value (s, "heuristic-contradictions")
+    new_val = [1] if gt_ls (get_new_value (s, "heuristic-contradictions") + get_old_value (s, "heuristic-contradictions")) [0] else [0]
     append_each (urgency, new_val)
 
-def s_heuristic_innovation_updates_heuristic_contradictions (ctx, s, _params):
+def s_heuristic_innovation_updates_airlock_expenses (ctx, s, _params):
+    if ctx.get ("profit-diverted-to-innovate") == None:
+        ctx ["profit-diverted-to-innovate"] = []
+    
+    profit_diverted_to_innovate = ctx.get ("profit-diverted-to-innovate")
+    new_val = mul_ls (get_new_value (s, "heuristic-innovation") + [_params ["base-heuristic-cost"]])
+    append_each (profit_diverted_to_innovate, new_val)
+
+def s_heuristic_innovation_updates_heuristics (ctx, s, _params):
     if ctx.get ("innovation") == None:
         ctx ["innovation"] = []
     
     innovation = ctx.get ("innovation")
-    new_val = diff_ls (get_new_value (s, "heuristic-contradictions") + mul_ls (div_ls ([sim_random (1, 50, s ["run"])] + [100]) + get_new_value (s, "heuristic-contradictions") + get_new_value (s, "heuristic-innovation")))
+    new_val = get_new_value (s, "heuristic-innovation")
     append_each (innovation, new_val)
 
 morph = lim.Problem ()
@@ -1484,12 +1540,16 @@ class Aggregation:
 
 
 
+def what_if_contradicts_security_users (what_if, security_users):
+    return all_true ([not (what_if == const_base_what_if and security_users == 0.1), not (what_if == const_base_what_if and security_users == 0.2), not (what_if == const_base_what_if and security_users == 0.8), not (what_if == const_base_what_if and security_users == 0.9), not (what_if == const_best_case_greedy and not security_users == 0.9), not (what_if == const_worst_case_greedy and not security_users == 0.1), not (what_if == const_best_case_generous and not security_users == 0.1), not (what_if == const_best_case_x and not security_users == 0.1)])
+
+
 def what_if_contradicts_free_loaders (what_if, free_loaders):
-    return all_true ([not (what_if == const_base_what_if and free_loaders == 0.1), not (what_if == const_base_what_if and free_loaders == 0.2), not (what_if == const_base_what_if and free_loaders == 0.8), not (what_if == const_base_what_if and free_loaders == 0.9), not (what_if == const_best_case_greedy and not free_loaders == 0.1), not (what_if == const_best_case_generous and not free_loaders == 0.1), not (what_if == const_best_case_x and not free_loaders == 0.1)])
+    return all_true ([not (what_if == const_base_what_if and free_loaders == 0.1), not (what_if == const_base_what_if and free_loaders == 0.2), not (what_if == const_base_what_if and free_loaders == 0.8), not (what_if == const_base_what_if and free_loaders == 0.9), not (what_if == const_best_case_greedy and not free_loaders == 0.1), not (what_if == const_worst_case_greedy and not free_loaders == 0.9), not (what_if == const_best_case_generous and not free_loaders == 0.1), not (what_if == const_best_case_x and not free_loaders == 0.1)])
 
 
 def what_if_contradicts_minimum_trade_profit (what_if, minimum_trade_profit):
-    return all_true ([not (what_if == const_base_what_if and minimum_trade_profit == 0.1), not (what_if == const_base_what_if and minimum_trade_profit == 0.2), not (what_if == const_base_what_if and minimum_trade_profit == 0.15), not (what_if == const_best_case_greedy and not minimum_trade_profit == 0.2), not (what_if == const_best_case_generous and not minimum_trade_profit == 0.2), not (what_if == const_best_case_x and not minimum_trade_profit == 0.2)])
+    return all_true ([not (what_if == const_base_what_if and minimum_trade_profit == 0.1), not (what_if == const_base_what_if and minimum_trade_profit == 0.2), not (what_if == const_base_what_if and minimum_trade_profit == 0.15), not (what_if == const_best_case_greedy and not minimum_trade_profit == 0.2), not (what_if == const_worst_case_greedy and not minimum_trade_profit == 0.01), not (what_if == const_best_case_generous and not minimum_trade_profit == 0.2), not (what_if == const_best_case_x and not minimum_trade_profit == 0.2)])
 
 
 def what_if_contradicts_supply_perception (what_if, supply_perception):
@@ -1497,27 +1557,35 @@ def what_if_contradicts_supply_perception (what_if, supply_perception):
 
 
 def what_if_contradicts_token_valuation (what_if, token_valuation):
-    return all_true ([not (what_if == const_base_what_if and token_valuation == const_half_value), not (what_if == const_best_case_greedy and not token_valuation == const_half_value), not (what_if == const_best_case_x and not token_valuation == const_half_value)])
+    return all_true ([not (what_if == const_base_what_if and token_valuation == const_half_value), not (what_if == const_best_case_greedy and not token_valuation == const_half_value), not (what_if == const_worst_case_greedy and not token_valuation == const_tenth_value), not (what_if == const_best_case_x and not token_valuation == const_half_value)])
 
 
 def what_if_contradicts_heuristic_innovation_scenario (what_if, heuristic_innovation_scenario):
-    return all_true ([not (what_if == const_base_what_if and not heuristic_innovation_scenario == const_holding), not (what_if == const_best_case_greedy and not heuristic_innovation_scenario == const_industrialized), not (what_if == const_best_case_generous and not heuristic_innovation_scenario == const_industrialized), not (what_if == const_best_case_x and not heuristic_innovation_scenario == const_industrialized)])
+    return all_true ([not (what_if == const_base_what_if and not heuristic_innovation_scenario == const_holding), not (what_if == const_best_case_greedy and not heuristic_innovation_scenario == const_industrialized), not (what_if == const_worst_case_greedy and not heuristic_innovation_scenario == const_industrialized), not (what_if == const_best_case_generous and not heuristic_innovation_scenario == const_industrialized), not (what_if == const_best_case_x and not heuristic_innovation_scenario == const_industrialized)])
 
 
 def anchor_contradicts_what_if (anchor, what_if):
-    return all_true ([not (anchor == const_anchor and what_if == const_best_case_x), not (anchor == const_anchor and what_if == const_worst_case_greedy), not (anchor == const_anchor and what_if == const_worst_case_generous), not (anchor == const_anchor and what_if == const_base_what_if)])
+    return all_true ([not (anchor == const_anchor and not what_if == const_best_case_greedy), not (anchor == const_anchor and what_if == const_best_case_x), not (anchor == const_anchor and what_if == const_worst_case_generous), not (anchor == const_anchor and what_if == const_best_case_generous), not (anchor == const_anchor and what_if == const_base_what_if)])
+
+
+def what_if_contradicts_max_growth (what_if, max_growth):
+    return all_true ([not (what_if == const_best_case_greedy and not max_growth == 1.2), not (what_if == const_worst_case_greedy and not max_growth == 1.2)])
 
 
 def what_if_contradicts_token_reward_sellers (what_if, token_reward_sellers):
-    return all_true ([not (what_if == const_base_what_if and token_reward_sellers == 0.1), not (what_if == const_base_what_if and token_reward_sellers == 0.9), not (what_if == const_best_case_greedy and not token_reward_sellers == 0.1), not (what_if == const_best_case_generous and not token_reward_sellers == 0.1), not (what_if == const_best_case_x and not token_reward_sellers == 0.1)])
+    return all_true ([not (what_if == const_base_what_if and token_reward_sellers == 0.1), not (what_if == const_base_what_if and token_reward_sellers == 0.9), not (what_if == const_best_case_greedy and not token_reward_sellers == 0.1), not (what_if == const_worst_case_greedy and not token_reward_sellers == 0.9), not (what_if == const_best_case_generous and not token_reward_sellers == 0.1), not (what_if == const_best_case_x and not token_reward_sellers == 0.1)])
 
 
 def what_if_contradicts_vesting_ratio (what_if, vesting_ratio):
-    return all_true ([not (what_if == const_base_what_if and vesting_ratio == 0.1), not (what_if == const_base_what_if and vesting_ratio == 0.5), not (what_if == const_best_case_greedy and not vesting_ratio == 0.1), not (what_if == const_best_case_generous and not vesting_ratio == 0.1), not (what_if == const_best_case_x and not vesting_ratio == 0.1)])
+    return all_true ([not (what_if == const_base_what_if and vesting_ratio == 0.1), not (what_if == const_base_what_if and vesting_ratio == 0.5), not (what_if == const_best_case_greedy and not vesting_ratio == 0.1), not (what_if == const_worst_case_greedy and not vesting_ratio == 0.5), not (what_if == const_best_case_generous and not vesting_ratio == 0.1), not (what_if == const_best_case_x and not vesting_ratio == 0.1)])
 
 
 def what_if_contradicts_data_value (what_if, data_value):
-    return all_true ([not (what_if == const_base_what_if and data_value == 0.6), not (what_if == const_best_case_greedy and not data_value == 0.6), not (what_if == const_best_case_generous and not data_value == 0.6), not (what_if == const_best_case_x and not data_value == 0.6)])
+    return all_true ([not (what_if == const_base_what_if and data_value == 0.6), not (what_if == const_best_case_greedy and not data_value == 0.6), not (what_if == const_worst_case_greedy and not data_value == 0.1), not (what_if == const_best_case_generous and not data_value == 0.6), not (what_if == const_best_case_x and not data_value == 0.6)])
+
+
+def what_if_contradicts_max_users (what_if, max_users):
+    return all_true ([not (what_if == const_best_case_greedy and not max_users == 100000000), not (what_if == const_worst_case_greedy and not max_users == 100000000)])
 
 
 def choose_agg_ls (agg, keep, run, default):
@@ -1805,10 +1873,12 @@ def generate_params ():
     morph.addVariable ("position-traders", [const_pow_2_position_trader])
     morph.addVariable ("investors", [const_pow_2_investor])
     morph.addVariable ("hodlers", [const_pow_2_hodler])
-    morph.addVariable ("max-users", [100000000])
+    morph.addVariable ("base-heuristic-cost", [4000])
+    morph.addVariable ("max-users", [1000000, 100000000])
     morph.addVariable ("data-value", [0.1, 0.6])
     morph.addVariable ("vesting-ratio", [0.1, 0.2, 0.5])
     morph.addVariable ("token-reward-sellers", [0.5, 0.1, 0.9])
+    morph.addVariable ("max-growth", [1.05, 1.1, 1.15, 1.2])
     morph.addVariable ("base-yield", [1.01])
     morph.addVariable ("heuristic-innovation-scenario", [const_industrialized, const_leading, const_holding, const_lagging, const_terminal])
     morph.addVariable ("anchor", [const_anchor])
@@ -1819,6 +1889,7 @@ def generate_params ():
     morph.addVariable ("money-growth", [const_observed_money_growth_id])
     morph.addVariable ("minimum-trade-profit", [0.01, 0.05, 0.1, 0.15, 0.2])
     morph.addVariable ("free-loaders", [0.1, 0.2, 0.5, 0.8, 0.9])
+    morph.addVariable ("security-users", [0.1, 0.2, 0.5, 0.8, 0.9])
     morph.addVariable ("token-price-delta-change-reward-amount", [0])
     morph.addVariable ("user-goal-progress-change-reward-amount", [0])
     morph.addVariable ("anti-user-goal-progress-change-reward-amount", [0])
@@ -1837,15 +1908,18 @@ def generate_params ():
     morph.addVariable ("token-price-delta-change-max-stake", [0])
     morph.addVariable ("user-goal-progress-change-max-stake", [0])
     morph.addVariable ("anti-user-goal-progress-change-max-stake", [0])
+    morph.addConstraint (what_if_contradicts_security_users, ("what-if", "security-users"))
     morph.addConstraint (what_if_contradicts_free_loaders, ("what-if", "free-loaders"))
     morph.addConstraint (what_if_contradicts_minimum_trade_profit, ("what-if", "minimum-trade-profit"))
     morph.addConstraint (what_if_contradicts_supply_perception, ("what-if", "supply-perception"))
     morph.addConstraint (what_if_contradicts_token_valuation, ("what-if", "token-valuation"))
     morph.addConstraint (what_if_contradicts_heuristic_innovation_scenario, ("what-if", "heuristic-innovation-scenario"))
     morph.addConstraint (anchor_contradicts_what_if, ("anchor", "what-if"))
+    morph.addConstraint (what_if_contradicts_max_growth, ("what-if", "max-growth"))
     morph.addConstraint (what_if_contradicts_token_reward_sellers, ("what-if", "token-reward-sellers"))
     morph.addConstraint (what_if_contradicts_vesting_ratio, ("what-if", "vesting-ratio"))
     morph.addConstraint (what_if_contradicts_data_value, ("what-if", "data-value"))
+    morph.addConstraint (what_if_contradicts_max_users, ("what-if", "max-users"))
     sol = morph.getSolutions ()
     ret = {}
     for ht in sol:
@@ -2595,11 +2669,20 @@ def s_update_change_max_stake (_params, substep, sH, s, _input, **kwargs):
     return "change-max-stake", update_state (s, "change-max-stake", change_max_stake)
 
 
+def s_update_fitness (_params, substep, sH, s, _input, **kwargs):
+    ctx = {}
+    s_token_price_updates_fitness (ctx, s, _params)
+    s_scam_page_successes_updates_fitness (ctx, s, _params)
+    myself = "fitness"
+    fitness = min_ls ([1000000000] + max_ls ([0] + div_ls ([1] + ctx.get ("price"))))
+    return "fitness", update_state (s, "fitness", fitness)
+
+
 def s_update_growth_level (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_reward_rate_updates_growth_level (ctx, s, _params)
     myself = "growth-level"
-    growth_level = min_ls ([1.25] + max_ls ([1] + sum_ls (agg_choose ([const_growth_spread], [0], s ["run"], []) + [0.05]) if lt_ls (get_new_value (s, "growth-level") + [1.2]) [0] else get_new_value (s, "growth-level") if gt_ls (ctx.get ("reward-rate-delta") + [0]) [0] else diff_ls (agg_choose ([const_growth_spread], [0], s ["run"], []) + [0.05]) if gt_ls (get_new_value (s, "growth-level") + [1]) [0] else get_new_value (s, "growth-level")))
+    growth_level = min_ls ([1.25] + max_ls ([1] + sum_ls (agg_choose ([const_growth_spread], [0], s ["run"], []) + [0.05]) if lt_ls (get_new_value (s, "growth-level") + [_params ["max-growth"]]) [0] else get_new_value (s, "growth-level") if gt_ls (ctx.get ("reward-rate-delta") + [0]) [0] else diff_ls (agg_choose ([const_growth_spread], [0], s ["run"], []) + [0.05]) if gt_ls (get_new_value (s, "growth-level") + [1]) [0] else get_new_value (s, "growth-level")))
     return "growth-level", update_state (s, "growth-level", growth_level)
 
 
@@ -2617,7 +2700,7 @@ def s_update_heuristic_innovation (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_heuristic_contradictions_updates_heuristic_innovation (ctx, s, _params)
     myself = "heuristic-innovation"
-    heuristic_innovation = ctx.get ("urgency")
+    heuristic_innovation = min_ls ([1] + max_ls ([0] + ctx.get ("urgency")))
     return "heuristic-innovation", update_state (s, "heuristic-innovation", heuristic_innovation)
 
 
@@ -2625,7 +2708,7 @@ def s_update_scammer_innovation (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_scam_page_success_rate_updates_scammer_innovation (ctx, s, _params)
     myself = "scammer-innovation"
-    scammer_innovation = ctx.get ("urgency")
+    scammer_innovation = min_ls ([1] + max_ls ([0] + ctx.get ("urgency")))
     return "scammer-innovation", update_state (s, "scammer-innovation", scammer_innovation)
 
 
@@ -2670,11 +2753,27 @@ def s_update_staking_opportunities (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_heuristic_contradictions (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    s_heuristic_innovation_updates_heuristic_contradictions (ctx, s, _params)
-    s_scammer_innovation_updates_heuristic_contradictions (ctx, s, _params)
+    s_heuristics_updates_heuristic_contradictions (ctx, s, _params)
+    s_anti_heuristics_updates_heuristic_contradictions (ctx, s, _params)
     myself = "heuristic-contradictions"
-    heuristic_contradictions = min_ls ([100] + max_ls ([0] + max_ls ([sim_random (5, 15, s ["run"])] + sum_ls (ctx.get ("innovation")))))
+    heuristic_contradictions = min_ls ([1] + max_ls ([0] + div_ls (ctx.get ("anti") + ctx.get ("heur"))))
     return "heuristic-contradictions", update_state (s, "heuristic-contradictions", heuristic_contradictions)
+
+
+def s_update_anti_heuristics (_params, substep, sH, s, _input, **kwargs):
+    ctx = {}
+    s_scammer_innovation_updates_anti_heuristics (ctx, s, _params)
+    myself = "anti-heuristics"
+    anti_heuristics = min_ls ([100] + max_ls ([1] + sum_ls (get_new_value (s, myself) + ctx.get ("innovation"))))
+    return "anti-heuristics", update_state (s, "anti-heuristics", anti_heuristics)
+
+
+def s_update_heuristics (_params, substep, sH, s, _input, **kwargs):
+    ctx = {}
+    s_heuristic_innovation_updates_heuristics (ctx, s, _params)
+    myself = "heuristics"
+    heuristics = min_ls ([100] + max_ls ([1] + sum_ls (get_new_value (s, myself) + ctx.get ("innovation"))))
+    return "heuristics", update_state (s, "heuristics", heuristics)
 
 
 def s_update_anti_user_goal_progress (_params, substep, sH, s, _input, **kwargs):
@@ -2721,6 +2820,7 @@ def s_update_airlock_lookup_price (_params, substep, sH, s, _input, **kwargs):
     s_airlock_users_updates_airlock_lookup_price (ctx, s, _params)
     s_token_price_updates_airlock_lookup_price (ctx, s, _params)
     s_change_lookup_fee_updates_airlock_lookup_price (ctx, s, _params)
+    s_change_user_fee_updates_airlock_lookup_price (ctx, s, _params)
     s_airlock_lookup_rate_updates_airlock_lookup_price (ctx, s, _params)
     s_airlock_expenses_updates_airlock_lookup_price (ctx, s, _params)
     myself = "airlock-lookup-price"
@@ -2730,8 +2830,9 @@ def s_update_airlock_lookup_price (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_airlock_expenses (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
+    s_heuristic_innovation_updates_airlock_expenses (ctx, s, _params)
     myself = "airlock-expenses"
-    airlock_expenses = min_ls ([1000000] + max_ls ([1] + get_new_value (s, "airlock-expenses")))
+    airlock_expenses = min_ls ([1000000] + max_ls ([1] + sum_ls (get_new_value (s, "airlock-expenses") + ctx.get ("profit-diverted-to-innovate"))))
     return "airlock-expenses", update_state (s, "airlock-expenses", airlock_expenses)
 
 
@@ -2948,9 +3049,11 @@ def s_update_token_reward_to_sell_rate (_params, substep, sH, s, _input, **kwarg
 
 def s_update_token_unstake_rate (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    s_resolved_entities_updates_token_unstake_rate (ctx, s, _params)
+    s_max_stake_updates_token_unstake_rate (ctx, s, _params)
+    s_staking_opportunities_updates_token_unstake_rate (ctx, s, _params)
+    s_staking_enthusiasm_updates_token_unstake_rate (ctx, s, _params)
     myself = "token-unstake-rate"
-    token_unstake_rate = ctx.get ("resolutions")
+    token_unstake_rate = mul_ls (ctx.get ("enthusiasm") + ctx.get ("staking-ops") + ctx.get ("max-per-entity"))
     return "token-unstake-rate", update_state (s, "token-unstake-rate", token_unstake_rate)
 
 
@@ -3019,16 +3122,19 @@ init_state ["change-user-fee"] = initialize_state (0)
 init_state ["change-lookup-fee"] = initialize_state (0)
 init_state ["change-stake-yield"] = initialize_state (0)
 init_state ["change-max-stake"] = initialize_state (0)
+init_state ["fitness"] = initialize_state (0)
 init_state ["growth-level"] = initialize_state (1)
 init_state ["reward-rate"] = initialize_state (0)
-init_state ["heuristic-innovation"] = initialize_state (np.median (range (0, 100)))
-init_state ["scammer-innovation"] = initialize_state (np.median (range (0, 100)))
+init_state ["heuristic-innovation"] = initialize_state (0)
+init_state ["scammer-innovation"] = initialize_state (0)
 init_state ["scam-profits-per-page"] = initialize_state (np.median (range (1, 100)))
 init_state ["stake-yield"] = initialize_state (1.01)
 init_state ["max-stake"] = initialize_state (300)
 init_state ["user-goal-progress"] = initialize_state (0)
 init_state ["staking-opportunities"] = initialize_state (1)
-init_state ["heuristic-contradictions"] = initialize_state (5)
+init_state ["heuristic-contradictions"] = initialize_state (0.01)
+init_state ["anti-heuristics"] = initialize_state (1)
+init_state ["heuristics"] = initialize_state (5)
 init_state ["anti-user-goal-progress"] = initialize_state (0)
 init_state ["staking-enthusiasm"] = initialize_state (div_ls ([15] + [100]))
 init_state ["money-growth-rate"] = initialize_state (1.0)
@@ -3108,6 +3214,7 @@ indicators_and_flows ["change-user-fee"] = s_update_change_user_fee
 indicators_and_flows ["change-lookup-fee"] = s_update_change_lookup_fee
 indicators_and_flows ["change-stake-yield"] = s_update_change_stake_yield
 indicators_and_flows ["change-max-stake"] = s_update_change_max_stake
+indicators_and_flows ["fitness"] = s_update_fitness
 indicators_and_flows ["growth-level"] = s_update_growth_level
 indicators_and_flows ["reward-rate"] = s_update_reward_rate
 indicators_and_flows ["heuristic-innovation"] = s_update_heuristic_innovation
@@ -3118,6 +3225,8 @@ indicators_and_flows ["max-stake"] = s_update_max_stake
 indicators_and_flows ["user-goal-progress"] = s_update_user_goal_progress
 indicators_and_flows ["staking-opportunities"] = s_update_staking_opportunities
 indicators_and_flows ["heuristic-contradictions"] = s_update_heuristic_contradictions
+indicators_and_flows ["anti-heuristics"] = s_update_anti_heuristics
+indicators_and_flows ["heuristics"] = s_update_heuristics
 indicators_and_flows ["anti-user-goal-progress"] = s_update_anti_user_goal_progress
 indicators_and_flows ["staking-enthusiasm"] = s_update_staking_enthusiasm
 indicators_and_flows ["money-growth-rate"] = s_update_money_growth_rate
@@ -3264,26 +3373,26 @@ def run_simulation ():
 
 
 sim_res = None
-genome_scam_page_successes = {}
-genome_scam_page_successes ["anti-user-goal-progress-change-max-stake"] = [-1, 0, 1]
-genome_scam_page_successes ["user-goal-progress-change-max-stake"] = [-1, 0, 1]
-genome_scam_page_successes ["token-price-delta-change-max-stake"] = [-1, 0, 1]
-genome_scam_page_successes ["anti-user-goal-progress-change-stake-yield"] = [-1, 0, 1]
-genome_scam_page_successes ["user-goal-progress-change-stake-yield"] = [-1, 0, 1]
-genome_scam_page_successes ["token-price-delta-change-stake-yield"] = [-1, 0, 1]
-genome_scam_page_successes ["anti-user-goal-progress-change-lookup-fee"] = [-1, 0, 1]
-genome_scam_page_successes ["user-goal-progress-change-lookup-fee"] = [-1, 0, 1]
-genome_scam_page_successes ["token-price-delta-change-lookup-fee"] = [-1, 0, 1]
-genome_scam_page_successes ["anti-user-goal-progress-change-user-fee"] = [-1, 0, 1]
-genome_scam_page_successes ["user-goal-progress-change-user-fee"] = [-1, 0, 1]
-genome_scam_page_successes ["token-price-delta-change-user-fee"] = [-1, 0, 1]
-genome_scam_page_successes ["anti-user-goal-progress-change-buyback-amount"] = [-1, 0, 1]
-genome_scam_page_successes ["user-goal-progress-change-buyback-amount"] = [-1, 0, 1]
-genome_scam_page_successes ["token-price-delta-change-buyback-amount"] = [-1, 0, 1]
-genome_scam_page_successes ["anti-user-goal-progress-change-reward-amount"] = [-1, 0, 1]
-genome_scam_page_successes ["user-goal-progress-change-reward-amount"] = [-1, 0, 1]
-genome_scam_page_successes ["token-price-delta-change-reward-amount"] = [-1, 0, 1]
-scam_page_successes_top_n = []
+genome_fitness = {}
+genome_fitness ["anti-user-goal-progress-change-max-stake"] = [-1, 0, 1]
+genome_fitness ["user-goal-progress-change-max-stake"] = [-1, 0, 1]
+genome_fitness ["token-price-delta-change-max-stake"] = [-1, 0, 1]
+genome_fitness ["anti-user-goal-progress-change-stake-yield"] = [-1, 0, 1]
+genome_fitness ["user-goal-progress-change-stake-yield"] = [-1, 0, 1]
+genome_fitness ["token-price-delta-change-stake-yield"] = [-1, 0, 1]
+genome_fitness ["anti-user-goal-progress-change-lookup-fee"] = [-1, 0, 1]
+genome_fitness ["user-goal-progress-change-lookup-fee"] = [-1, 0, 1]
+genome_fitness ["token-price-delta-change-lookup-fee"] = [-1, 0, 1]
+genome_fitness ["anti-user-goal-progress-change-user-fee"] = [-1, 0, 1]
+genome_fitness ["user-goal-progress-change-user-fee"] = [-1, 0, 1]
+genome_fitness ["token-price-delta-change-user-fee"] = [-1, 0, 1]
+genome_fitness ["anti-user-goal-progress-change-buyback-amount"] = [-1, 0, 1]
+genome_fitness ["user-goal-progress-change-buyback-amount"] = [-1, 0, 1]
+genome_fitness ["token-price-delta-change-buyback-amount"] = [-1, 0, 1]
+genome_fitness ["anti-user-goal-progress-change-reward-amount"] = [-1, 0, 1]
+genome_fitness ["user-goal-progress-change-reward-amount"] = [-1, 0, 1]
+genome_fitness ["token-price-delta-change-reward-amount"] = [-1, 0, 1]
+fitness_top_n = []
 def genome_eq (g1, g2):
     same = 0
     total = 0
@@ -3317,7 +3426,12 @@ def generate_individual (genome):
 
 def splice_individual (ind, cfg):
     for g in ind:
-        cfg ["M"] [g] = [ind [g]]
+        param_list = cfg ["M"] [g]
+        i = 0
+        while i < len (param_list):
+            param_list [i] = ind [g]
+            i = (i + 1)
+
 
 
 
@@ -3333,7 +3447,7 @@ def continue_evolving (pop, gen, max_gens, goal, eq):
     return True
 
 
-def fitness (tup):
+def get_fitness (tup):
     return tup [1]
 
 
@@ -3400,15 +3514,15 @@ def fitness_per_run (data, fitness):
     i = 0
     size = len (data)
     while i < size:
-        run = data [i] ["run"]
-        fitval = data [i] [fitness]
+        run = data.iloc [i] ["run"]
+        fitval = data.iloc [i] [fitness]
         run_fit [run] = fitval
         i = (i + 1)
 
     fit_sum = 0
     runs = 0
-    for k in dict:
-        fit_sum = (fit_sum + dict [k])
+    for k in run_fit:
+        fit_sum = (fit_sum + run_fit [k])
         runs = (runs + 1)
 
     return (fit_sum / runs)
@@ -3416,39 +3530,39 @@ def fitness_per_run (data, fitness):
 
 def run_evolution ():
     global cfg
-    scam_page_successes = create_pop (genome_scam_page_successes, 20)
-    global scam_page_successes_top_n
-    scam_page_successes_top_n_ever = []
-    scam_page_successes_gen = 1
+    fitness = create_pop (genome_fitness, 20)
+    global fitness_top_n
+    fitness_top_n_ever = []
+    fitness_gen = 1
     evolve = True
     while evolve:
         ind_id = 0
-        while ind_id < len (scam_page_successes):
-            ind = scam_page_successes [ind_id] [0]
+        while ind_id < len (fitness):
+            ind = fitness [ind_id] [0]
             splice_individual (ind, cfg)
             with io.capture_output() as captured:
                 run_simulation ()
 
-            fitness_val = fitness_per_run (sim_res, "scam-page-successes")
-            scam_page_successes [ind_id] = (scam_page_successes [ind_id] [0], fitness_val)
+            fitness_val = fitness_per_run (sim_res, "fitness")
+            fitness [ind_id] = (fitness [ind_id] [0], fitness_val)
             ind_id = (ind_id + 1)
 
-        evolve = (evolve and continue_evolving (scam_page_successes, scam_page_successes_gen, 100, 0, "="))
-        tmp = sorted (scam_page_successes, key=fitness, reverse=False)
+        evolve = (evolve and continue_evolving (fitness, fitness_gen, 100, 0, "="))
+        tmp = sorted (fitness, key=get_fitness, reverse=False)
         keep = math.ceil (((20 / 100) * 20))
         del tmp [keep:]
-        scam_page_successes = tmp
+        fitness = tmp
         new = []
-        for i in scam_page_successes:
-            new.append ((quasi_umad (i [0], genome_scam_page_successes, 10, 10), None))
+        for i in fitness:
+            new.append ((quasi_umad (i [0], genome_fitness, 10, 10), None))
 
-        scam_page_successes_gen = (scam_page_successes_gen + 1)
-        scam_page_successes_top_n = (scam_page_successes_top_n + scam_page_successes)
-        tmp = sorted (scam_page_successes_top_n, key=fitness, reverse=False)
+        fitness_gen = (fitness_gen + 1)
+        fitness_top_n = (fitness_top_n + fitness)
+        tmp = sorted (fitness_top_n, key=get_fitness, reverse=False)
         keep = math.ceil (((20 / 100) * 20))
         del tmp [keep:]
-        scam_page_successes_top_n = tmp
-        scam_page_successes = new
+        fitness_top_n = tmp
+        fitness = new
 
 
 
