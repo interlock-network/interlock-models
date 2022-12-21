@@ -239,6 +239,13 @@ with this directly, the last scenario would involve scammers moving from _mimicr
 scenarios will create _more_ demand for threat-intelligence instead of less, which in turn will create more
 demand for the security-staking.
 
+## What This Means
+
+Some quick math: 20 individuals and 100 generations, means 2000 runs, which complete in 10 or so minutes (total time for all pops).
+Before, a few hundred runs would cause memory exhaustion (cadCAD cannot balance between parallel and serial operation).
+But now, we have the equivalent of 18 parameters that can have an infinite range of values from -100 to 100, and in 2000 runs the
+evolutionary mechanism finds viable organisms. So, it can do more runs than before, and it can test more parameters in fewer runs.
+
 ## Future Work
 
 Aside from fixing the loopholes, we want to add more stimuli, and have a granularity greater than
