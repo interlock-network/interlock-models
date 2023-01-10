@@ -76,7 +76,7 @@ and vesting cliffs fully modelled), allowing us to sell and buy tokens as (and i
 
 Lets start with the 20-week run.
 
-![](../../graphs/mad-3-20-users.png)
+![](../../plots/mad-3-20-users.png)
 
 Focusing on users, we see that we grow from 1k users to 8k users over 20 weeks, which
 is around the maximum that the model can manage, if we assume a weekly growth rate between 1% and 20%
@@ -84,17 +84,17 @@ is around the maximum that the model can manage, if we assume a weekly growth ra
 
 Let's take a look at the adoption rate and abandonment rate.
 
-![](../../graphs/mad-3-20-adoption.png)
+![](../../graph/mad-3-20-adoption.png)
 
 We can see a general upwards trend in adoption, and only a brief period of abandonment.
 Let's take a look at that.
 
-![](../../graphs/mad-3-20-abandonment.png)
+![](../../plots/mad-3-20-abandonment.png)
 
 We do have some abandoment, but nothing catastrophic, since the model reacted and decreased the
 heuristic contradictions.
 
-![](../../graphs/mad-3-20-heuristics.png)
+![](../../plots/mad-3-20-heuristics.png)
 
 As you can see, the model aggressively adds new heuristics to make the contradiction-rate as
 low as possible, as quickly as possible -- which is adaptive in the first 20 weeks (where it
@@ -106,7 +106,7 @@ to do with the initialization-values for the scam-page stocks and flows).
 
 Speaking of money:
 
-![](../../graphs/mad-3-20-expenses.png)
+![](../../plots/mad-3-20-expenses.png)
 
 We can see the expenses skyrocket due to the heuristic-innovatin that is taking place
 (we assume that each new heuristic costs 1 additional engineer-week -- this is a worst-case
@@ -119,7 +119,7 @@ demand for the data we sell), these numbers are trending upwards. (Also, by the 
 accumulate 60M reward-tokens, which could easily cover all expenses, so no big deal -- we just have
 to add swapping into MAD-4).
 
-![](../../graphs/mad-3-20-upkeep.png)
+![](../../plots/mad-3-20-upkeep.png)
 
 Now we will take a look at the various token-pools. The first 20 weeks see relatively stagnant
 pools, which makes sense due to the vesting-rates. The rewards pool is growing steadily. You will
@@ -128,7 +128,7 @@ in the fitness. This, in turn, is because it does nothing to impact our revenue.
 it would impact our revenue, since it would make the creation and training of new heuristics much easier.
 That is something we will add into MAD-4.
 
-![](../../graphs/mad-3-20-pools.png)
+![](../../plots/mad-3-20-pools.png)
 
 Below, we have the token-price and related variables. As in every run, the token-price opens high, and
 trend downwards (which matches real world data, and happens to be good for adoption-rate). There is
@@ -139,7 +139,7 @@ why token-price? Even though we _do_ have a clock, it does _not_ act as a stimul
 price-fluctuations are _periodic_ the model was able to use those as a way keep time! Perhaps
 we should make the clock a stimulus?
 
-![](../../graphs/mad-3-20-token-price.png)
+![](../../plots/mad-3-20-token-price.png)
 
 ## Top Organisms for 20W Run
 
@@ -447,38 +447,38 @@ Here we see that the model has learned how to maintain user-growth, and it relia
 100M user ceiling (we should probably make the ceiling lower for the worst-case... but this
 isn't Dark Souls). 
 
-![](../../graphs/mad-3-200-users.png)
+![](../../plots/mad-3-200-users.png)
 
 As expected adoption grows multiplicatively.
 
-![](../../graphs/mad-3-200-adoption.png)
+![](../../plots/mad-3-200-adoption.png)
 
 Abandonment is nipped in the bud, as before.
 
-![](../../graphs/mad-3-200-abandonment.png)
+![](../../plots/mad-3-200-abandonment.png)
 
 We can see that the model fanatically pursues heuristics, as before.
 We have an arbitrary ceiling set at 100. We should either raise the ceiling,
 or make the model stop when the ceiling is hit.
 
-![](../../graphs/mad-3-200-heuristics.png)
+![](../../plots/mad-3-200-heuristics.png)
 
 We see that the expenses keep rising, mostly becuase we keep making new heuristics,
 even though we do not have to.
 
-![](../../graphs/mad-3-200-expenses.png)
+![](../../plots/mad-3-200-expenses.png)
 
 The above heuristic-fanaticism driven expenses result in a total upkeep of over
 50M for 200 weeks. Which comes out to an operating budget of 13M per year. Clearly,
 we could've stopped spending much earlier (around 120 weeks). Making our real-life
 expenses around 20M, or 5.25M per year.
 
-![](../../graphs/mad-3-200-upkeep.png)
+![](../../plots/mad-3-200-upkeep.png)
 
 The model is still not a fan of staking, for the aforementioned reasons, and it
 is miserly with the rewards, once the threat of heuristic contradictions is neutralized.
 
-![](../../graphs/mad-3-200-pools.png)
+![](../../plots/mad-3-200-pools.png)
 
 Token-price does go down -- as usual -- but it seems stable. It is no doubt held up
 by the lookup-fee of user fee of 5 tokens. In this worst-case scenario, 90% of our
@@ -487,14 +487,14 @@ are above zero. However, that means that 10M people are still paying their dues 
 pushing that price up. It also means, that we see a 90% decline in share-rate, but that
 is not enough to sink us, because the _adoption_ is still increasing.
 
-![](../../graphs/mad-3-20-token-price.png)
+![](../../plots/mad-3-20-token-price.png)
 
 Finally a revenue-plot. Clearly revenues -- even in the worst-case scenario -- end up
 dwarfing all upkeep and expenses. This is in _large_ part due to scammers _not noticing_
 (they need to see a 10% drop in scam-success-rate, which would require more than 100M
 users -- quite possibly a billion or two).
 
-![](../../graphs/mad-3-20-revenue.png)
+![](../../plots/mad-3-20-revenue.png)
 
 ## Top Organisms for 200W Run
 
