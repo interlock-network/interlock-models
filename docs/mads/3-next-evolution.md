@@ -487,14 +487,14 @@ are above zero. However, that means that 10M people are still paying their dues 
 pushing that price up. It also means, that we see a 90% decline in share-rate, but that
 is not enough to sink us, because the _adoption_ is still increasing.
 
-![](../../plots/mad-3-20-token-price.png)
+![](../../plots/mad-3-200-token-price.png)
 
 Finally a revenue-plot. Clearly revenues -- even in the worst-case scenario -- end up
 dwarfing all upkeep and expenses. This is in _large_ part due to scammers _not noticing_
 (they need to see a 10% drop in scam-success-rate, which would require more than 100M
 users -- quite possibly a billion or two).
 
-![](../../plots/mad-3-20-revenue.png)
+![](../../plots/mad-3-200-revenue.png)
 
 ## Top Organisms for 200W Run
 
