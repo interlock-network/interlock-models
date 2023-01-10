@@ -2,9 +2,9 @@
 
 ## Changes Since MAD-2
 
-In the previous Model Analysis Document (MAD-2) we took a look at how
+In the previous Model Analysis Document (MAD-2), we took a look at how
 genetic algorithms can be used to efficiently select decision-parameters from
-a large solution space. Since then we have made some changes to the evolutionary
+a large solution space. Since then, we have made some changes to the evolutionary
 parameters, because -- once we fixed the loopholes that the original genetic runs
 found -- it became apparent that the fitness and performance of the organisms
 declined dramatically.
@@ -22,7 +22,7 @@ scenario, so we expect the token-price to be disappointing.
 
 Instead of price, we tried a composite value of users, revenue, and price, and that was
 also not very effective. For short runs, price is the dominant value, because price is high
-in the beginnign, but it drags down our aggregate fitness in long runs (all of these
+in the beginning, but it drags down our aggregate fitness in long runs (all of these
 are equally weighted, btw). However, a fitness value based on revenue alone produced
 very good results (revenue is directly correlated to users, and the more of it you have,
 the more fit you are). It should be noted that picking strange and nonsensical fitness-values,
@@ -37,7 +37,7 @@ of users based on the contradiction-rate (which roughly corresponds to false-pos
 
 For example, if we have a contradiction-rate of 20%, every _fifth_ page the user visits
 is going to -- annoyingly -- get flagged incorrectly, forcing them to intervene and
-get annoyed. In the model, if there is a 20% contradiciton-rate, we lose 20% of users
+get annoyed. In the model, if there is a 20% contradiction-rate, we lose 20% of users
 for in that week. This is catastrophic, so we don't model higher contradiction rates.
 In general, if the contradiction rate is between 1% and 5%, only 1% of users get lost.
 If between 5% and 10%, only 2%. If between 10% and 15%, only 5%. If between 15% and 20%,
@@ -108,7 +108,7 @@ Speaking of money:
 
 ![](../../plots/mad-3-20-expenses.png)
 
-We can see the expenses skyrocket due to the heuristic-innovatin that is taking place
+We can see the expenses skyrocket due to the heuristic-innovation that is taking place
 (we assume that each new heuristic costs 1 additional engineer-week -- this is a worst-case
 run, after all).
 
@@ -134,7 +134,7 @@ Below, we have the token-price and related variables. As in every run, the token
 trend downwards (which matches real world data, and happens to be good for adoption-rate). There is
 nothing eye-popping to see here. But we do want to point out a curiosity. Before we added the
 heuristic-contradictions stimulus, the model would interpret token-price fluctuations as a signal
-to add more heuristics. Why? Well, if it didn't it would have less users and lower revenue. But,
+to add more heuristics. Why? Well, if it didn't, it would have fewer users and lower revenue. But,
 why token-price? Even though we _do_ have a clock, it does _not_ act as a stimulus. However, since
 price-fluctuations are _periodic_ the model was able to use those as a way keep time! Perhaps
 we should make the clock a stimulus?
@@ -147,7 +147,7 @@ Here are the top organisms for the 20W run. You will notice that all of them hav
 one stimulus that triggers their `urgency` action, which results in heuristic innovation.
 You will also notice that these top-performers have lots of zero-stimuli. It is unclear why,
 but the organisms seem to trend towards zero generation-after-generation. The deletion-rate
-might be too high, but who knows. The nice thing about this, is that we can see which stimuli
+might be too high, but who knows. The nice thing about this is that we can see which stimuli
 are not _strictly_ necessary.
 
 ```
@@ -463,7 +463,7 @@ or make the model stop when the ceiling is hit.
 
 ![](../../plots/mad-3-200-heuristics.png)
 
-We see that the expenses keep rising, mostly becuase we keep making new heuristics,
+We see that the expenses keep rising, mostly because we keep making new heuristics,
 even though we do not have to.
 
 ![](../../plots/mad-3-200-expenses.png)
@@ -480,16 +480,16 @@ is miserly with the rewards, once the threat of heuristic contradictions is neut
 
 ![](../../plots/mad-3-200-pools.png)
 
-Token-price does go down -- as usual -- but it seems stable. It is no doubt held up
-by the lookup-fee of user fee of 5 tokens. In this worst-case scenario, 90% of our
-users are free-loaders, meaning that they turn off their data-sharing if the lookup-prices
-are above zero. However, that means that 10M people are still paying their dues in ILOCK,
-pushing that price up. It also means, that we see a 90% decline in share-rate, but that
+Token-price does go down -- as usual -- but it seems stable. It is no doubt held up 
+by the user fee of 5 tokens. In this worst-case scenario, 90% of our users are 
+free-loaders, meaning that they turn off their data-sharing if the lookup-prices
+are above zero. However, that means that 10M people are still paying their dues in $ILOCK,
+pushing that price up. It also means that we see a 90% decline in share-rate, but that
 is not enough to sink us, because the _adoption_ is still increasing.
 
 ![](../../plots/mad-3-200-token-price.png)
 
-Finally a revenue-plot. Clearly revenues -- even in the worst-case scenario -- end up
+Finally, a revenue-plot. Clearly revenues -- even in the worst-case scenario -- end up
 dwarfing all upkeep and expenses. This is in _large_ part due to scammers _not noticing_
 (they need to see a 10% drop in scam-success-rate, which would require more than 100M
 users -- quite possibly a billion or two).
@@ -739,9 +739,9 @@ an absolute value interpretation so -0.5 is equivalent to 0.5), to _offset_ the 
 
 ## Fitness Timeline for 200W Run
 
-In each generation the fitness hovers between 1.6 and 1.7 billion in revenue.
+In each generation, the fitness hovers between 1.6 and 1.7 billion in revenue.
 Which is not surprising. We populate the first generation with randomly generated
-organisms, that have -- effectively -- a 3-value genome. It was very likley that
+organisms that have -- effectively -- a 3-value genome. It was very likley that
 a number of those organisms would have a non-zero urgency and a non-zero reward-amount.
 Then it was a matter of letting the evolution converge towards zero, via simple gene-deletion,
 so that the important factors stood out to us.
