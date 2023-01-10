@@ -84,7 +84,7 @@ is around the maximum that the model can manage, if we assume a weekly growth ra
 
 Let's take a look at the adoption rate and abandonment rate.
 
-![](../../graph/mad-3-20-adoption.png)
+![](../../plots/mad-3-20-adoption.png)
 
 We can see a general upwards trend in adoption, and only a brief period of abandonment.
 Let's take a look at that.
