@@ -2,7 +2,7 @@
 
 ## Changes Since MAD-1
 
-In the previous MAD (MAD-1) we took a look at how reward-rate was
+In the previous Model Analysis Document (MAD-1) we took a look at how reward-rate was
 correlated with adoption-rate. Since that time, we have made changes
 to how adoption is handled, so that it is more realistic. Specifically,
 our adoption is modelled via a growth-rate between 1% and 20% per week
