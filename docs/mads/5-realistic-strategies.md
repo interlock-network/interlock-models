@@ -324,7 +324,8 @@ that is fine as long as the foundation-pool is not also zero. These 2 pools are 
 We see that over time the majority of tokens end up in the token-hold-pool. This reflect the pareto-principle.
 Essetially, longer-term investors end up acquiring more and more tokens, while short-term investors end up
 fighting over fewer and fewer tokens. This drives the price up. You will also notice that the revenue-rate
-is zero, but the revenue is rising. This is because the in-model interlock buys and sells tokens. What is
+is not visible (it is in the 50k to 100k range), but the revenue is rising by the millions. This is because the
+in-model interlock buys and sells tokens. What is
 interesting is that this organism does not decide to buy or sell based on token-price but rather on the
 other 2 stimuli.
 
