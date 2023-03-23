@@ -25,7 +25,7 @@ state-variable as a fitness-value. This immediately disqualified python-librarie
 We, on the other hand, want to use the cadCAD simulation _itself_ as a complex fitness
 function, and we want our evolution to be _simple_. Where most systems want to evolve
 tree-like and stack-like _programs_ -- it is, after all, part of the field of
-_program synthesis_ -- we want to evolve an optimal set of signed, floating-point
+_program synthesis_ -- we want to evolve an optimized set of signed, floating-point
 integers, and let the model do the rest.
 
 Other changes include how we model heuristic-contradictions. We model heuristics and anti-heuristics,
