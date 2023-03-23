@@ -59,7 +59,7 @@ tokens into/from these pools in any way that it wants, but it is obligated to se
 tokens to pay for any expenses that it lacks cash to pay for.
 
 For more realism, we have removed crude parametrizations for moving rewards into
-the sell-pool or hold-pool -- all rewards are now moved into the hold-pool, and are
+the sell-pool or hold-pool -- all rewards are now moved into the `token-hold-pool`, and are
 stored in the order-books as having been "bought" for a price of zero. This makes the
 dynamic between rewards and trading more endogenous than before.
 
@@ -115,9 +115,9 @@ less tenable (because multiplying by an extremely small price causes 10x smaller
 
 We ran a few evolutions to get a diverse set of optimized organisms. We are going to
 look at 3 of them. We will call them: price-destabilizer, price-stabilizer, and crowd-funder.
-We will look -- in this order -- at each of these organisms' genomes, the stimulus/action-plots,
-the various token-pools and revenue-pool, the token-price, and extension-related metrics like
-user-base-size, and so on.
+We will look -- in this order -- at each of these organisms' genomes, the Stimulus-Action Plots,
+the various Token Pools and Revenue Pool, the `token-price`, and extension-related metrics like
+`threatslayer-users`, and so on.
 
 ### Genomes
 
@@ -228,7 +228,7 @@ Just the actions plots for crowdfunder:
 We can see that the crowdfunder changes rewards as a function of contradiction-rate
 and distance-from-user-goal, which means that it keeps issuing rewards until it reaches
 the assumed maximum (i.e. 0.5M) or the simulation ends. The same holds for the
-amount of tokens the in-model interlock chooses to sell. But it buys less-and-less
+amount of tokens the in-model Interlock chooses to sell. But it buys less-and-less
 and it approaches the user-goal, and it allows less-and-less staking as more users
 join the network. There is no per-lookup-fee but there is a weekly user-fee which
 is modulated by token-price-delta, contradiction-rate, and anti-user-goal -- the latter
@@ -327,7 +327,7 @@ We see that over time the majority of tokens end up in the token-hold-pool. This
 Essetially, longer-term investors end up acquiring more and more tokens, while short-term investors end up
 fighting over fewer and fewer tokens. This drives the price up. You will also notice that the revenue-rate
 is not visible (it is in the 50k to 100k range), but the revenue is rising by the millions. This is because the
-in-model interlock buys and sells tokens. What is
+in-model Interlock buys and sells tokens. What is
 interesting is that this organism does not decide to buy or sell based on token-price but rather on the
 other 2 stimuli.
 
@@ -345,7 +345,7 @@ the arithmetic of investment-pool to sell-pool -- it tries to make one bigger an
 
 
 And now we get to the hold/unhold-rates which represent buys and sells. The blue and green lines are token **buybacks**.
-The orange and red lines and tokens that interlock **sells**. The purple line represents money the in-model Interlock
+The orange and red lines and tokens that Interlock **sells**. The purple line represents money the in-model Interlock
 gets from the market due to token-sales. Yellow lines represent ordinary token-holders selling their tokens, and the pink line
 represents ordinary token-holders buying tokens. 
 
@@ -404,7 +404,7 @@ We have a bunch of other questions we would like to answer.
 
     * We want to try aggregate flow-rates as fitness values (analogous to GDP).
     * We want to try a fitness "integral" instead of a point-in-time fitness (if sim had ended 2 turns earlier, result can be different).
-    * We want to see what happens when the investment-rate is 1000x larger (making it impossible for interlock to influence price in any way, directly or indirectly).
+    * We want to see what happens when the investment-rate is 1000x larger (making it impossible for Interlock to influence price in any way, directly or indirectly).
     * We want to use absolute-value genomes, to speed up evolution.
     * We want to use any signed genome-numbers as a _reciprocal_ or _inverse_ instead of a _negation_ (i.e. `G >= 0 ? S*G : abs(((S-G)*G))`). 
     * We want to try a trading-volume-delta as a _stimulus_ (instead of price-delta).
