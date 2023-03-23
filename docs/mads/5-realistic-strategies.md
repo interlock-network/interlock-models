@@ -402,6 +402,7 @@ new nodes and flows).
 
 We have a bunch of other questions we would like to answer.
 
+    * We want to try a user-limit of 10k to see if the only viable strategies are the price-stabilizer strategy or if there exist others.
     * We want to try aggregate flow-rates as fitness values (analogous to GDP).
     * We want to try a fitness "integral" instead of a point-in-time fitness (if sim had ended 2 turns earlier, result can be different).
     * We want to see what happens when the investment-rate is 1000x larger (making it impossible for Interlock to influence price in any way, directly or indirectly).
@@ -410,5 +411,4 @@ We have a bunch of other questions we would like to answer.
     * We want to try a trading-volume-delta as a _stimulus_ (instead of price-delta).
     * We want to try the fitness-value _itself_ as a stimulus (it is computed within the cadCAD model and is thus accessible).
     * We want to pin 1/2 or 2/3 of the founders-pool (because the current greed-level is unrealistic)
-    * We want to try a user-limit of 10k to see if the only viable strategies are the price-stabilizer strategy or if there exist others.
     * Play with different vesting periods for presales and other pools.
