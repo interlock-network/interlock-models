@@ -18,7 +18,9 @@ us into fitness: we now use an up-rounded (i.e. `math.ceil`), power-of-2 logarit
 the product of `threatslayer-users`, `token-price`, `foundation-pool-tokens`. Initially,
 we used `token-price` times `foundation-pool-tokens` as a total-asset-value
 fitness-measure. These both produced much better results than a raw revenue-based fitness.
-What this basically does is that it promotes more diverse organisms (i.e. organisms that
+What this basically does is that it promotes more aligned organisms (i.e. any fitness-measure
+focuses on revenue will promote a moral-hazard, encouraging rug-pulls or general money-hoarding)
+and more diverse organisms (i.e. organisms that
 are fit in different ways), and it only notices organisms that are twice as fit as
 most-fit-organism-so-far. Organisms can sacrifice relative-asset-value (i.e. token-price)
 for cumulative-asset-value (i.e. foundation-pool-size), and for user-base-size --
@@ -75,12 +77,12 @@ This in turn lets all of those pools be governed by market-logic of the order-bo
 ## Simulation Parameters and New Data
 
 We are still running with the worst-case parameters, but have made them _even worse_
-than before. We now cap our user-base and half-a-million (similar extensions like Browser WatchDog have
+than before. We now cap our user-base to half-a-million (similar extensions like Browser WatchDog have
 this many users, so not unprecedented) instead of one-hundred-million.
 We have updated the valuation to the real-world current 0.035$ valuation.
 
 We have also used production-data to update the page-visit-rate per user per week
-(a surprising 231 pages per user), maliciousness-rate, and uniqueness-rate. We have
+(a surprising 231 pages per user -- we expected more), maliciousness-rate, and uniqueness-rate. We have
 used the same data to observe weekly user-base-growth, and it hovers at around 2%,
 with a high of 8%. This of course changes a lot of the economics, and user-growth.
 For starters, it means that our false positive/negative rate has to be much smaller.
