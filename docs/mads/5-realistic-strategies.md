@@ -367,7 +367,7 @@ in stable prices. In some sense the stabilizer is sacrificing its own economic l
 
 ## Conclusion
 
-Looking at all of this, we are left a question. Why does the crowdfunder so well? The answer is in the name. It uses
+Looking at all of this, we are left with a question. Why does the crowdfunder do so well? The answer is in the name. It uses
 its token and cash reserves to create steady activity in the markets (and keep itself alive financially), while changing
 the weekly user-fees in relation to the percentage-price-change. If a price goes up or down by at least 100%, we set the
 user-fee to 3 tokens a week. This means that our user-base will have to buy 3 tokens to keep using the product for the next
@@ -375,7 +375,7 @@ week (we assume that 50% of them are free-loaders and will not do it). This of c
 users buying 3 tokens is a lot of tokens. If the price stagnates, we reduce the user-fee to zero. Which frees those tokens up
 for other uses.
 
-One might question whether people would buy more tokens due to an surprise price-driven price-hike. But, we suspect that the
+One might question whether people would buy more tokens due to a surprise price-driven price-hike. But, we suspect that the
 answer is "yes, depending on how it is presented". For example, if we announce a price-hike that will begin next week, it may
 motivate people to start hoarding "cheap" tokens _this_ week, which will have a similar upwards-pressure on the token-price,
 before any hike is even enacted.
@@ -409,3 +409,4 @@ We have a bunch of other questions we would like to answer.
     * We want to try the fitness-value _itself_ as a stimulus (it is computed within the cadCAD model and is thus accessible).
     * We want to pin 1/2 or 2/3 of the founders-pool (because the current greed-level is unrealistic)
     * We want to try a user-limit of 10k to see if the only viable strategies are the price-stabilizer strategy or if there exist others.
+    * Play with different vesting periods for presales and other pools.
