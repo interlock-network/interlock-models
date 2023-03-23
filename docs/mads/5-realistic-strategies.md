@@ -404,6 +404,7 @@ We have a bunch of other questions we would like to answer.
     * We want to try a fitness "integral" instead of a point-in-time fitness (if sim had ended 2 turns earlier, result can be different).
     * We want to see what happens when the investment-rate is 1000x larger (making it impossible for interlock to influence price in any way, directly or indirectly).
     * We want to use absolute-value genomes, to speed up evolution.
+    * We want to use any signed genome-numbers as a _reciprocal_ or _inverse_ instead of a _negation_ (i.e. `G >= 0 ? S*G : abs(((S-G)*G))`). 
     * We want to try a trading-volume-delta as a _stimulus_ (instead of price-delta).
     * We want to try the fitness-value _itself_ as a stimulus (it is computed within the cadCAD model and is thus accessible).
     * We want to pin 1/2 or 2/3 of the founders-pool (because the current greed-level is unrealistic)
