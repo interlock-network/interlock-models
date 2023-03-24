@@ -411,4 +411,5 @@ We have a bunch of other questions we would like to answer.
     * We want to try a trading-volume-delta as a _stimulus_ (instead of price-delta).
     * We want to try the fitness-value _itself_ as a stimulus (it is computed within the cadCAD model and is thus accessible).
     * We want to pin 1/2 or 2/3 of the founders-pool (because the current greed-level is unrealistic)
+    * We want to add a randomized panic-event or crisis-event to simulate a sudden price-drop or sell off in response to a hack (on us or otherwise)
     * Play with different vesting periods for presales and other pools.
