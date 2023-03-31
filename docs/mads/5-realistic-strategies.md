@@ -27,7 +27,7 @@ for cumulative-asset-value (i.e. foundation-pool-size), and for user-base-size -
 or any permutation thereof.
 
 Speaking of stimuli and genes, we have also made our genome more granular with values:
-`[-1, -0.66, -0.33, 0, 0.33, 0.66 1]`. This gives the model more nuanced sensitivities.
+`[-1, -0.66, -0.33, 0, 0.33, 0.66, 1]`. This gives the model more nuanced sensitivities.
 We have pinned (i.e. frozen) certain genes at zero, namely `stim-contradiction-rate-change-max-stake`
 and `stim-contradiction-rate-change-lookup-fee`. These tended to always converge on zero.
 Any pinned genes do not get counted as part of the mutation-rate percentage.
