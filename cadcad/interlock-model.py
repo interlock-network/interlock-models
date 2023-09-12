@@ -7,6 +7,7 @@ import plotly.express as px
 import random
 import math
 import time
+import datetime
 from cadCAD.configuration.utils import bound_norm_random, config_sim, time_step, env_trigger
 from cadCAD.configuration import Experiment
 from cadCAD.engine import ExecutionMode, ExecutionContext
@@ -17,7 +18,7 @@ def s_stim_token_price_delta_updates_change_max_stake (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-max-stake"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-max-stake"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-max-stake"]]) + [_params ["stim-token-price-delta-change-max-stake"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-max-stake"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-max-stake"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-token-price-delta")) + [_params ["stim-token-price-delta-change-max-stake"]])))
     append_each (points, new_val)
 
 def s_stim_token_price_delta_updates_change_stake_yield (ctx, s, _params):
@@ -25,7 +26,7 @@ def s_stim_token_price_delta_updates_change_stake_yield (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-stake-yield"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-stake-yield"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-stake-yield"]]) + [_params ["stim-token-price-delta-change-stake-yield"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-stake-yield"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-stake-yield"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-token-price-delta")) + [_params ["stim-token-price-delta-change-stake-yield"]])))
     append_each (points, new_val)
 
 def s_stim_token_price_delta_updates_change_lookup_fee (ctx, s, _params):
@@ -33,7 +34,7 @@ def s_stim_token_price_delta_updates_change_lookup_fee (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-lookup-fee"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-lookup-fee"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-lookup-fee"]]) + [_params ["stim-token-price-delta-change-lookup-fee"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-lookup-fee"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-lookup-fee"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-token-price-delta")) + [_params ["stim-token-price-delta-change-lookup-fee"]])))
     append_each (points, new_val)
 
 def s_stim_token_price_delta_updates_change_user_fee (ctx, s, _params):
@@ -41,7 +42,7 @@ def s_stim_token_price_delta_updates_change_user_fee (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-user-fee"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-user-fee"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-user-fee"]]) + [_params ["stim-token-price-delta-change-user-fee"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-user-fee"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-user-fee"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-token-price-delta")) + [_params ["stim-token-price-delta-change-user-fee"]])))
     append_each (points, new_val)
 
 def s_stim_token_price_delta_updates_change_buyback_amount (ctx, s, _params):
@@ -49,7 +50,7 @@ def s_stim_token_price_delta_updates_change_buyback_amount (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-buyback-amount"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-buyback-amount"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-buyback-amount"]]) + [_params ["stim-token-price-delta-change-buyback-amount"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-buyback-amount"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-buyback-amount"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-token-price-delta")) + [_params ["stim-token-price-delta-change-buyback-amount"]])))
     append_each (points, new_val)
 
 def s_stim_token_price_delta_updates_change_sell_amount (ctx, s, _params):
@@ -57,7 +58,7 @@ def s_stim_token_price_delta_updates_change_sell_amount (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-sell-amount"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-sell-amount"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-sell-amount"]]) + [_params ["stim-token-price-delta-change-sell-amount"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-sell-amount"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-sell-amount"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-token-price-delta")) + [_params ["stim-token-price-delta-change-sell-amount"]])))
     append_each (points, new_val)
 
 def s_stim_token_price_delta_updates_change_reward_amount (ctx, s, _params):
@@ -65,7 +66,7 @@ def s_stim_token_price_delta_updates_change_reward_amount (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-reward-amount"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-reward-amount"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-reward-amount"]]) + [_params ["stim-token-price-delta-change-reward-amount"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-reward-amount"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-reward-amount"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-token-price-delta")) + [_params ["stim-token-price-delta-change-reward-amount"]])))
     append_each (points, new_val)
 
 def s_stim_token_price_delta_updates_change_urgency (ctx, s, _params):
@@ -73,7 +74,7 @@ def s_stim_token_price_delta_updates_change_urgency (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-urgency"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-urgency"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-urgency"]]) + [_params ["stim-token-price-delta-change-urgency"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-token-price-delta") + [_params ["stim-token-price-delta-change-urgency"]]) if gt_eq_ls ([_params ["stim-token-price-delta-change-urgency"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-token-price-delta")) + [_params ["stim-token-price-delta-change-urgency"]])))
     append_each (points, new_val)
 
 def s_stim_anti_user_goal_progress_updates_change_max_stake (ctx, s, _params):
@@ -81,7 +82,7 @@ def s_stim_anti_user_goal_progress_updates_change_max_stake (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-max-stake"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-max-stake"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-max-stake"]]) + [_params ["stim-anti-user-goal-progress-change-max-stake"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-max-stake"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-max-stake"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-anti-user-goal-progress")) + [_params ["stim-anti-user-goal-progress-change-max-stake"]])))
     append_each (points, new_val)
 
 def s_stim_anti_user_goal_progress_updates_change_stake_yield (ctx, s, _params):
@@ -89,7 +90,7 @@ def s_stim_anti_user_goal_progress_updates_change_stake_yield (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-stake-yield"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-stake-yield"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-stake-yield"]]) + [_params ["stim-anti-user-goal-progress-change-stake-yield"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-stake-yield"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-stake-yield"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-anti-user-goal-progress")) + [_params ["stim-anti-user-goal-progress-change-stake-yield"]])))
     append_each (points, new_val)
 
 def s_stim_anti_user_goal_progress_updates_change_lookup_fee (ctx, s, _params):
@@ -97,7 +98,7 @@ def s_stim_anti_user_goal_progress_updates_change_lookup_fee (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-lookup-fee"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-lookup-fee"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-lookup-fee"]]) + [_params ["stim-anti-user-goal-progress-change-lookup-fee"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-lookup-fee"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-lookup-fee"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-anti-user-goal-progress")) + [_params ["stim-anti-user-goal-progress-change-lookup-fee"]])))
     append_each (points, new_val)
 
 def s_stim_anti_user_goal_progress_updates_change_user_fee (ctx, s, _params):
@@ -105,7 +106,7 @@ def s_stim_anti_user_goal_progress_updates_change_user_fee (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-user-fee"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-user-fee"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-user-fee"]]) + [_params ["stim-anti-user-goal-progress-change-user-fee"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-user-fee"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-user-fee"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-anti-user-goal-progress")) + [_params ["stim-anti-user-goal-progress-change-user-fee"]])))
     append_each (points, new_val)
 
 def s_stim_anti_user_goal_progress_updates_change_buyback_amount (ctx, s, _params):
@@ -113,7 +114,7 @@ def s_stim_anti_user_goal_progress_updates_change_buyback_amount (ctx, s, _param
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-buyback-amount"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-buyback-amount"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-buyback-amount"]]) + [_params ["stim-anti-user-goal-progress-change-buyback-amount"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-buyback-amount"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-buyback-amount"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-anti-user-goal-progress")) + [_params ["stim-anti-user-goal-progress-change-buyback-amount"]])))
     append_each (points, new_val)
 
 def s_stim_anti_user_goal_progress_updates_change_sell_amount (ctx, s, _params):
@@ -121,7 +122,7 @@ def s_stim_anti_user_goal_progress_updates_change_sell_amount (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-sell-amount"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-sell-amount"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-sell-amount"]]) + [_params ["stim-anti-user-goal-progress-change-sell-amount"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-sell-amount"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-sell-amount"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-anti-user-goal-progress")) + [_params ["stim-anti-user-goal-progress-change-sell-amount"]])))
     append_each (points, new_val)
 
 def s_stim_anti_user_goal_progress_updates_change_reward_amount (ctx, s, _params):
@@ -129,7 +130,7 @@ def s_stim_anti_user_goal_progress_updates_change_reward_amount (ctx, s, _params
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-reward-amount"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-reward-amount"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-reward-amount"]]) + [_params ["stim-anti-user-goal-progress-change-reward-amount"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-reward-amount"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-reward-amount"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-anti-user-goal-progress")) + [_params ["stim-anti-user-goal-progress-change-reward-amount"]])))
     append_each (points, new_val)
 
 def s_stim_anti_user_goal_progress_updates_change_urgency (ctx, s, _params):
@@ -137,7 +138,71 @@ def s_stim_anti_user_goal_progress_updates_change_urgency (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-urgency"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-urgency"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-urgency"]]) + [_params ["stim-anti-user-goal-progress-change-urgency"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-anti-user-goal-progress") + [_params ["stim-anti-user-goal-progress-change-urgency"]]) if gt_eq_ls ([_params ["stim-anti-user-goal-progress-change-urgency"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-anti-user-goal-progress")) + [_params ["stim-anti-user-goal-progress-change-urgency"]])))
+    append_each (points, new_val)
+
+def s_stim_user_delta_updates_change_max_stake (ctx, s, _params):
+    if ctx.get ("points") == None:
+        ctx ["points"] = []
+    
+    points = ctx.get ("points")
+    new_val = (mul_ls (get_new_value (s, "stim-user-delta") + [_params ["stim-user-delta-change-max-stake"]]) if gt_eq_ls ([_params ["stim-user-delta-change-max-stake"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-user-delta")) + [_params ["stim-user-delta-change-max-stake"]])))
+    append_each (points, new_val)
+
+def s_stim_user_delta_updates_change_stake_yield (ctx, s, _params):
+    if ctx.get ("points") == None:
+        ctx ["points"] = []
+    
+    points = ctx.get ("points")
+    new_val = (mul_ls (get_new_value (s, "stim-user-delta") + [_params ["stim-user-delta-change-stake-yield"]]) if gt_eq_ls ([_params ["stim-user-delta-change-stake-yield"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-user-delta")) + [_params ["stim-user-delta-change-stake-yield"]])))
+    append_each (points, new_val)
+
+def s_stim_user_delta_updates_change_lookup_fee (ctx, s, _params):
+    if ctx.get ("points") == None:
+        ctx ["points"] = []
+    
+    points = ctx.get ("points")
+    new_val = (mul_ls (get_new_value (s, "stim-user-delta") + [_params ["stim-user-delta-change-lookup-fee"]]) if gt_eq_ls ([_params ["stim-user-delta-change-lookup-fee"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-user-delta")) + [_params ["stim-user-delta-change-lookup-fee"]])))
+    append_each (points, new_val)
+
+def s_stim_user_delta_updates_change_user_fee (ctx, s, _params):
+    if ctx.get ("points") == None:
+        ctx ["points"] = []
+    
+    points = ctx.get ("points")
+    new_val = (mul_ls (get_new_value (s, "stim-user-delta") + [_params ["stim-user-delta-change-user-fee"]]) if gt_eq_ls ([_params ["stim-user-delta-change-user-fee"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-user-delta")) + [_params ["stim-user-delta-change-user-fee"]])))
+    append_each (points, new_val)
+
+def s_stim_user_delta_updates_change_buyback_amount (ctx, s, _params):
+    if ctx.get ("points") == None:
+        ctx ["points"] = []
+    
+    points = ctx.get ("points")
+    new_val = (mul_ls (get_new_value (s, "stim-user-delta") + [_params ["stim-user-delta-change-buyback-amount"]]) if gt_eq_ls ([_params ["stim-user-delta-change-buyback-amount"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-user-delta")) + [_params ["stim-user-delta-change-buyback-amount"]])))
+    append_each (points, new_val)
+
+def s_stim_user_delta_updates_change_sell_amount (ctx, s, _params):
+    if ctx.get ("points") == None:
+        ctx ["points"] = []
+    
+    points = ctx.get ("points")
+    new_val = (mul_ls (get_new_value (s, "stim-user-delta") + [_params ["stim-user-delta-change-sell-amount"]]) if gt_eq_ls ([_params ["stim-user-delta-change-sell-amount"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-user-delta")) + [_params ["stim-user-delta-change-sell-amount"]])))
+    append_each (points, new_val)
+
+def s_stim_user_delta_updates_change_reward_amount (ctx, s, _params):
+    if ctx.get ("points") == None:
+        ctx ["points"] = []
+    
+    points = ctx.get ("points")
+    new_val = (mul_ls (get_new_value (s, "stim-user-delta") + [_params ["stim-user-delta-change-reward-amount"]]) if gt_eq_ls ([_params ["stim-user-delta-change-reward-amount"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-user-delta")) + [_params ["stim-user-delta-change-reward-amount"]])))
+    append_each (points, new_val)
+
+def s_stim_user_delta_updates_change_urgency (ctx, s, _params):
+    if ctx.get ("points") == None:
+        ctx ["points"] = []
+    
+    points = ctx.get ("points")
+    new_val = (mul_ls (get_new_value (s, "stim-user-delta") + [_params ["stim-user-delta-change-urgency"]]) if gt_eq_ls ([_params ["stim-user-delta-change-urgency"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-user-delta")) + [_params ["stim-user-delta-change-urgency"]])))
     append_each (points, new_val)
 
 def s_stim_contradiction_rate_updates_change_max_stake (ctx, s, _params):
@@ -145,7 +210,7 @@ def s_stim_contradiction_rate_updates_change_max_stake (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-max-stake"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-max-stake"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-max-stake"]]) + [_params ["stim-contradiction-rate-change-max-stake"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-max-stake"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-max-stake"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-contradiction-rate")) + [_params ["stim-contradiction-rate-change-max-stake"]])))
     append_each (points, new_val)
 
 def s_stim_contradiction_rate_updates_change_stake_yield (ctx, s, _params):
@@ -153,7 +218,7 @@ def s_stim_contradiction_rate_updates_change_stake_yield (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-stake-yield"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-stake-yield"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-stake-yield"]]) + [_params ["stim-contradiction-rate-change-stake-yield"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-stake-yield"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-stake-yield"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-contradiction-rate")) + [_params ["stim-contradiction-rate-change-stake-yield"]])))
     append_each (points, new_val)
 
 def s_stim_contradiction_rate_updates_change_lookup_fee (ctx, s, _params):
@@ -161,7 +226,7 @@ def s_stim_contradiction_rate_updates_change_lookup_fee (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-lookup-fee"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-lookup-fee"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-lookup-fee"]]) + [_params ["stim-contradiction-rate-change-lookup-fee"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-lookup-fee"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-lookup-fee"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-contradiction-rate")) + [_params ["stim-contradiction-rate-change-lookup-fee"]])))
     append_each (points, new_val)
 
 def s_stim_contradiction_rate_updates_change_user_fee (ctx, s, _params):
@@ -169,7 +234,7 @@ def s_stim_contradiction_rate_updates_change_user_fee (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-user-fee"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-user-fee"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-user-fee"]]) + [_params ["stim-contradiction-rate-change-user-fee"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-user-fee"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-user-fee"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-contradiction-rate")) + [_params ["stim-contradiction-rate-change-user-fee"]])))
     append_each (points, new_val)
 
 def s_stim_contradiction_rate_updates_change_buyback_amount (ctx, s, _params):
@@ -177,7 +242,7 @@ def s_stim_contradiction_rate_updates_change_buyback_amount (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-buyback-amount"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-buyback-amount"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-buyback-amount"]]) + [_params ["stim-contradiction-rate-change-buyback-amount"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-buyback-amount"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-buyback-amount"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-contradiction-rate")) + [_params ["stim-contradiction-rate-change-buyback-amount"]])))
     append_each (points, new_val)
 
 def s_stim_contradiction_rate_updates_change_sell_amount (ctx, s, _params):
@@ -185,7 +250,7 @@ def s_stim_contradiction_rate_updates_change_sell_amount (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-sell-amount"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-sell-amount"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-sell-amount"]]) + [_params ["stim-contradiction-rate-change-sell-amount"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-sell-amount"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-sell-amount"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-contradiction-rate")) + [_params ["stim-contradiction-rate-change-sell-amount"]])))
     append_each (points, new_val)
 
 def s_stim_contradiction_rate_updates_change_reward_amount (ctx, s, _params):
@@ -193,7 +258,7 @@ def s_stim_contradiction_rate_updates_change_reward_amount (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-reward-amount"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-reward-amount"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-reward-amount"]]) + [_params ["stim-contradiction-rate-change-reward-amount"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-reward-amount"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-reward-amount"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-contradiction-rate")) + [_params ["stim-contradiction-rate-change-reward-amount"]])))
     append_each (points, new_val)
 
 def s_stim_contradiction_rate_updates_change_urgency (ctx, s, _params):
@@ -201,7 +266,7 @@ def s_stim_contradiction_rate_updates_change_urgency (ctx, s, _params):
         ctx ["points"] = []
     
     points = ctx.get ("points")
-    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-urgency"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-urgency"]] + [0]) [0] else abs_ls (mul_ls (sum_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-urgency"]]) + [_params ["stim-contradiction-rate-change-urgency"]])))
+    new_val = (mul_ls (get_new_value (s, "stim-contradiction-rate") + [_params ["stim-contradiction-rate-change-urgency"]]) if gt_eq_ls ([_params ["stim-contradiction-rate-change-urgency"]] + [0]) [0] else abs_ls (mul_ls (diff_ls ([1] + get_new_value (s, "stim-contradiction-rate")) + [_params ["stim-contradiction-rate-change-urgency"]])))
     append_each (points, new_val)
 
 def s_token_price_updates_swing_order_book (ctx, s, _params):
@@ -265,7 +330,7 @@ def s_clock_updates_hodler_order_book (ctx, s, _params):
         ctx ["sell-time"] = []
     
     sell_time = ctx.get ("sell-time")
-    new_val = sum_ls ([200] + get_new_value (s, "clock"))
+    new_val = sum_ls ([50] + get_new_value (s, "clock"))
     append_each (sell_time, new_val)
 
 def s_token_hold_rate_updates_swing_order_book (ctx, s, _params):
@@ -2153,7 +2218,7 @@ def s_token_price_updates_stim_token_price_delta (ctx, s, _params):
         ctx ["stim"] = []
     
     stim = ctx.get ("stim")
-    new_val = div_ls (diff_ls (get_new_value (s, "token-price") + get_old_value (s, "token-price")) + get_old_value (s, "token-price"))
+    new_val = div_ls (get_new_value (s, "token-price") + sum_ls (get_new_value (s, "token-price") + get_old_value (s, "token-price")))
     append_each (stim, new_val)
 
 def s_threatslayer_users_updates_stim_anti_user_goal_progress (ctx, s, _params):
@@ -2162,6 +2227,14 @@ def s_threatslayer_users_updates_stim_anti_user_goal_progress (ctx, s, _params):
     
     stim = ctx.get ("stim")
     new_val = div_ls (diff_ls ([_params ["max-users"]] + get_new_value (s, "threatslayer-users")) + [_params ["max-users"]])
+    append_each (stim, new_val)
+
+def s_threatslayer_users_updates_stim_user_delta (ctx, s, _params):
+    if ctx.get ("stim") == None:
+        ctx ["stim"] = []
+    
+    stim = ctx.get ("stim")
+    new_val = div_ls (get_new_value (s, "threatslayer-users") + sum_ls (get_old_value (s, "threatslayer-users") + get_new_value (s, "threatslayer-users")))
     append_each (stim, new_val)
 
 def s_heuristic_contradictions_updates_stim_contradiction_rate (ctx, s, _params):
@@ -2217,7 +2290,7 @@ def s_change_reward_amount_updates_reward_to_held_rate (ctx, s, _params):
         ctx ["mul-reward-rate"] = []
     
     mul_reward_rate = ctx.get ("mul-reward-rate")
-    new_val = get_new_value (s, "change-reward-amount")
+    new_val = min_ls ([1] + get_new_value (s, "change-reward-amount"))
     append_each (mul_reward_rate, new_val)
 
 def s_threatslayer_lookup_price_updates_reward_rate (ctx, s, _params):
@@ -2566,6 +2639,7 @@ def s_heuristic_innovation_updates_heuristics (ctx, s, _params):
 
 morph = lim.Problem ()
 sim_rng = None
+sim_rng_run = 1
 def tuple_list_to_agg (ls):
     ret = {}
     if len (ls) == 0:
@@ -3145,27 +3219,35 @@ def generate_params ():
     morph.addVariable ("security-users", [0.1, 0.2, 0.5, 0.8, 0.9])
     morph.addVariable ("stim-token-price-delta-change-urgency", [0])
     morph.addVariable ("stim-anti-user-goal-progress-change-urgency", [0])
+    morph.addVariable ("stim-user-delta-change-urgency", [0])
     morph.addVariable ("stim-contradiction-rate-change-urgency", [0])
     morph.addVariable ("stim-token-price-delta-change-reward-amount", [0])
     morph.addVariable ("stim-anti-user-goal-progress-change-reward-amount", [0])
+    morph.addVariable ("stim-user-delta-change-reward-amount", [0])
     morph.addVariable ("stim-contradiction-rate-change-reward-amount", [0])
     morph.addVariable ("stim-token-price-delta-change-sell-amount", [0])
     morph.addVariable ("stim-anti-user-goal-progress-change-sell-amount", [0])
+    morph.addVariable ("stim-user-delta-change-sell-amount", [0])
     morph.addVariable ("stim-contradiction-rate-change-sell-amount", [0])
     morph.addVariable ("stim-token-price-delta-change-buyback-amount", [0])
     morph.addVariable ("stim-anti-user-goal-progress-change-buyback-amount", [0])
+    morph.addVariable ("stim-user-delta-change-buyback-amount", [0])
     morph.addVariable ("stim-contradiction-rate-change-buyback-amount", [0])
     morph.addVariable ("stim-token-price-delta-change-user-fee", [0])
     morph.addVariable ("stim-anti-user-goal-progress-change-user-fee", [0])
+    morph.addVariable ("stim-user-delta-change-user-fee", [0])
     morph.addVariable ("stim-contradiction-rate-change-user-fee", [0])
     morph.addVariable ("stim-token-price-delta-change-lookup-fee", [0])
     morph.addVariable ("stim-anti-user-goal-progress-change-lookup-fee", [0])
+    morph.addVariable ("stim-user-delta-change-lookup-fee", [0])
     morph.addVariable ("stim-contradiction-rate-change-lookup-fee", [0])
     morph.addVariable ("stim-token-price-delta-change-stake-yield", [0])
     morph.addVariable ("stim-anti-user-goal-progress-change-stake-yield", [0])
+    morph.addVariable ("stim-user-delta-change-stake-yield", [0])
     morph.addVariable ("stim-contradiction-rate-change-stake-yield", [0])
     morph.addVariable ("stim-token-price-delta-change-max-stake", [0])
     morph.addVariable ("stim-anti-user-goal-progress-change-max-stake", [0])
+    morph.addVariable ("stim-user-delta-change-max-stake", [0])
     morph.addVariable ("stim-contradiction-rate-change-max-stake", [0])
     morph.addConstraint (what_if_contradicts_security_users, ("what-if", "security-users"))
     morph.addConstraint (what_if_contradicts_free_loaders, ("what-if", "free-loaders"))
@@ -3434,15 +3516,14 @@ def mul_pos_ls (ls):
     elif len (ls) == 1:
         return ls
     
-    ret_val = 1
+    ret_val = 0
     first = 1
     for n in ls:
-        if first == 1:
-            ret_val = n
-            first = 0
-        elif first == 0:
-            if n == 0:
-                ret_val = ret_val
+        if n == 0:
+            ret_val = ret_val
+        else:
+            if ret_val == 0:
+                ret_val = (1 * n)
             else:
                 ret_val = (ret_val * n)
             
@@ -3672,8 +3753,13 @@ def gt_eq_ls (ls):
 
 def sim_random (a, b, run):
     global sim_rng
+    global sim_rng_run
     if sim_rng == None:
         sim_rng = np.random.default_rng ((124215432 + (run - 1)))
+    
+    if not sim_rng_run == run:
+        sim_rng = np.random.default_rng ((124215432 + (run - 1)))
+        sim_rng_run = run
     
     return sim_rng.integers (a, (b + 1))
 
@@ -3858,14 +3944,14 @@ const_buy = 0
 const_sell = 1
 const_rewards_delay = 0
 const_rewards_size = 300000000
-const_rewards_period = 48
+const_rewards_period = 144
 const_foundation_delay = 1
 const_foundation_size = 182597475
 const_foundation_period = 84
 const_growth_spread = agg_store_records (Aggregation (["rate"], "count"), [[1.025, 32], [1.05, 16], [1.075, 8], [1.1, 3]])
 const_critical_contradictions = 0.05
 const_ideal_contradictions = 0.007
-const_contradiction_loss = agg_store_records (Aggregation (["0.01", "0.02", "0.02"], "count"), [[0.02, 0.03, 0.05], [0.03, 0.04, 0.07], [0.04, 0.05, 0.1], [0.05, 1.1, 0.2]])
+const_contradiction_loss = agg_store_records (Aggregation (["from", "to", "pct-loss"], "count"), [[0.01, 0.02, 0.0225], [0.02, 0.03, 0.025], [0.03, 0.04, 0.03], [0.04, 0.05, 0.042], [0.05, 1.1, 0.077]])
 def s_update_hodler_order_book (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_reward_to_held_rate_updates_hodler_order_book (ctx, s, _params)
@@ -3981,6 +4067,14 @@ def s_update_swing_order_book (_params, substep, sH, s, _input, **kwargs):
     return "swing-order-book", update_state (s, "swing-order-book", swing_order_book)
 
 
+def s_update_stim_anti_user_goal_progress (_params, substep, sH, s, _input, **kwargs):
+    ctx = {}
+    s_threatslayer_users_updates_stim_anti_user_goal_progress (ctx, s, _params)
+    myself = "stim-anti-user-goal-progress"
+    stim_anti_user_goal_progress = min_ls ([1] + max_ls ([0] + abs_ls (ctx.get ("stim"))))
+    return "stim-anti-user-goal-progress", update_state (s, "stim-anti-user-goal-progress", stim_anti_user_goal_progress)
+
+
 def s_update_stim_token_price_delta (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_token_price_updates_stim_token_price_delta (ctx, s, _params)
@@ -3993,6 +4087,7 @@ def s_update_change_urgency (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_stim_token_price_delta_updates_change_urgency (ctx, s, _params)
     s_stim_anti_user_goal_progress_updates_change_urgency (ctx, s, _params)
+    s_stim_user_delta_updates_change_urgency (ctx, s, _params)
     s_stim_contradiction_rate_updates_change_urgency (ctx, s, _params)
     myself = "change-urgency"
     change_urgency = min_ls ([1] + max_ls ([0] + mul_pos_ls (ctx.get ("points"))))
@@ -4003,6 +4098,7 @@ def s_update_change_reward_amount (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_stim_token_price_delta_updates_change_reward_amount (ctx, s, _params)
     s_stim_anti_user_goal_progress_updates_change_reward_amount (ctx, s, _params)
+    s_stim_user_delta_updates_change_reward_amount (ctx, s, _params)
     s_stim_contradiction_rate_updates_change_reward_amount (ctx, s, _params)
     myself = "change-reward-amount"
     change_reward_amount = min_ls ([1] + max_ls ([0] + mul_pos_ls (ctx.get ("points"))))
@@ -4012,8 +4108,9 @@ def s_update_change_reward_amount (_params, substep, sH, s, _input, **kwargs):
 def s_update_change_sell_amount (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_stim_token_price_delta_updates_change_sell_amount (ctx, s, _params)
-    s_stim_contradiction_rate_updates_change_sell_amount (ctx, s, _params)
     s_stim_anti_user_goal_progress_updates_change_sell_amount (ctx, s, _params)
+    s_stim_user_delta_updates_change_sell_amount (ctx, s, _params)
+    s_stim_contradiction_rate_updates_change_sell_amount (ctx, s, _params)
     myself = "change-sell-amount"
     change_sell_amount = min_ls ([1] + max_ls ([0] + mul_pos_ls (ctx.get ("points"))))
     return "change-sell-amount", update_state (s, "change-sell-amount", change_sell_amount)
@@ -4021,9 +4118,10 @@ def s_update_change_sell_amount (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_change_buyback_amount (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    s_stim_contradiction_rate_updates_change_buyback_amount (ctx, s, _params)
-    s_stim_anti_user_goal_progress_updates_change_buyback_amount (ctx, s, _params)
     s_stim_token_price_delta_updates_change_buyback_amount (ctx, s, _params)
+    s_stim_anti_user_goal_progress_updates_change_buyback_amount (ctx, s, _params)
+    s_stim_user_delta_updates_change_buyback_amount (ctx, s, _params)
+    s_stim_contradiction_rate_updates_change_buyback_amount (ctx, s, _params)
     myself = "change-buyback-amount"
     change_buyback_amount = min_ls ([1] + max_ls ([0] + mul_pos_ls (ctx.get ("points"))))
     return "change-buyback-amount", update_state (s, "change-buyback-amount", change_buyback_amount)
@@ -4032,6 +4130,7 @@ def s_update_change_buyback_amount (_params, substep, sH, s, _input, **kwargs):
 def s_update_change_user_fee (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_stim_contradiction_rate_updates_change_user_fee (ctx, s, _params)
+    s_stim_user_delta_updates_change_user_fee (ctx, s, _params)
     s_stim_anti_user_goal_progress_updates_change_user_fee (ctx, s, _params)
     s_stim_token_price_delta_updates_change_user_fee (ctx, s, _params)
     myself = "change-user-fee"
@@ -4042,6 +4141,7 @@ def s_update_change_user_fee (_params, substep, sH, s, _input, **kwargs):
 def s_update_change_lookup_fee (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
     s_stim_contradiction_rate_updates_change_lookup_fee (ctx, s, _params)
+    s_stim_user_delta_updates_change_lookup_fee (ctx, s, _params)
     s_stim_anti_user_goal_progress_updates_change_lookup_fee (ctx, s, _params)
     s_stim_token_price_delta_updates_change_lookup_fee (ctx, s, _params)
     myself = "change-lookup-fee"
@@ -4051,8 +4151,9 @@ def s_update_change_lookup_fee (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_change_stake_yield (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    s_stim_token_price_delta_updates_change_stake_yield (ctx, s, _params)
     s_stim_anti_user_goal_progress_updates_change_stake_yield (ctx, s, _params)
+    s_stim_token_price_delta_updates_change_stake_yield (ctx, s, _params)
+    s_stim_user_delta_updates_change_stake_yield (ctx, s, _params)
     s_stim_contradiction_rate_updates_change_stake_yield (ctx, s, _params)
     myself = "change-stake-yield"
     change_stake_yield = min_ls ([1] + max_ls ([0] + mul_pos_ls (ctx.get ("points"))))
@@ -4061,6 +4162,7 @@ def s_update_change_stake_yield (_params, substep, sH, s, _input, **kwargs):
 
 def s_update_change_max_stake (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
+    s_stim_user_delta_updates_change_max_stake (ctx, s, _params)
     s_stim_anti_user_goal_progress_updates_change_max_stake (ctx, s, _params)
     s_stim_token_price_delta_updates_change_max_stake (ctx, s, _params)
     s_stim_contradiction_rate_updates_change_max_stake (ctx, s, _params)
@@ -4077,7 +4179,7 @@ def s_update_fitness (_params, substep, sH, s, _input, **kwargs):
     s_token_price_updates_fitness (ctx, s, _params)
     s_scam_page_successes_updates_fitness (ctx, s, _params)
     myself = "fitness"
-    fitness = min_ls ([1000000000] + max_ls ([0] + div_ls ([1] + max_ls ([1] + sum_ls (ceil_ls (lg2_ls (max_ls ([1] + mul_ls (ctx.get ("users") + ctx.get ("price") + sum_ls (ctx.get ("assets")))))))))))
+    fitness = min_ls ([1000000000] + max_ls ([0] + div_ls ([1] + max_ls ([1] + sum_ls (ceil_ls (max_ls ([1] + sum_ls (mul_ls (ctx.get ("users") + [1000000.0]) + mul_ls (ctx.get ("price") + sum_ls (ctx.get ("assets")))))))))))
     return "fitness", update_state (s, "fitness", fitness)
 
 
@@ -4147,12 +4249,12 @@ def s_update_max_stake (_params, substep, sH, s, _input, **kwargs):
     return "max-stake", update_state (s, "max-stake", max_stake)
 
 
-def s_update_stim_anti_user_goal_progress (_params, substep, sH, s, _input, **kwargs):
+def s_update_stim_user_delta (_params, substep, sH, s, _input, **kwargs):
     ctx = {}
-    s_threatslayer_users_updates_stim_anti_user_goal_progress (ctx, s, _params)
-    myself = "stim-anti-user-goal-progress"
-    stim_anti_user_goal_progress = min_ls ([1] + max_ls ([0] + abs_ls (ctx.get ("stim"))))
-    return "stim-anti-user-goal-progress", update_state (s, "stim-anti-user-goal-progress", stim_anti_user_goal_progress)
+    s_threatslayer_users_updates_stim_user_delta (ctx, s, _params)
+    myself = "stim-user-delta"
+    stim_user_delta = min_ls ([1] + max_ls ([0] + abs_ls (ctx.get ("stim"))))
+    return "stim-user-delta", update_state (s, "stim-user-delta", stim_user_delta)
 
 
 def s_update_staking_opportunities (_params, substep, sH, s, _input, **kwargs):
@@ -4611,7 +4713,7 @@ def s_update_rewards_unhold_rate (_params, substep, sH, s, _input, **kwargs):
     s_threatslayer_expenses_updates_rewards_unhold_rate (ctx, s, _params)
     s_clock_updates_rewards_unhold_rate (ctx, s, _params)
     myself = "rewards-unhold-rate"
-    rewards_unhold_rate = (sum_ls (mul_ls (max_ls ([0] + div_ls (diff_ls (ctx.get ("expenses") + ctx.get ("revenue")) + ctx.get ("price"))) + [_params ["cover-own-costs"]]) + mul_ls (ctx.get ("mul-sell-amount") + diff_ls (mul_ls (div_ls ([300000000] + [48]) + ctx.get ("months")) + diff_ls ([300000000] + get_new_value (s, "rewards-pool"))))) if gt_ls (ctx.get ("months") + [0]) [0] else [0])
+    rewards_unhold_rate = (sum_ls (mul_ls (max_ls ([0] + div_ls (diff_ls (ctx.get ("expenses") + ctx.get ("revenue")) + ctx.get ("price"))) + [_params ["cover-own-costs"]]) + mul_ls (ctx.get ("mul-sell-amount") + diff_ls (mul_ls (div_ls ([300000000] + [144]) + ctx.get ("months")) + diff_ls ([300000000] + get_new_value (s, "rewards-pool"))))) if gt_ls (ctx.get ("months") + [0]) [0] else [0])
     return "rewards-unhold-rate", update_state (s, "rewards-unhold-rate", rewards_unhold_rate)
 
 
@@ -4690,13 +4792,14 @@ def s_update_community_sale_hold_rate (_params, substep, sH, s, _input, **kwargs
     return "community-sale-hold-rate", update_state (s, "community-sale-hold-rate", community_sale_hold_rate)
 
 
-cfg = { "N": 1, "T": range (200), "M": generate_params () }
+cfg = { "N": 1, "T": range (50), "M": generate_params () }
 init_state = {}
 init_state ["flow-adjustments"] = {}
 init_state ["hodler-order-book"] = initialize_state (Aggregation (["sell-time", "buy-price", "quantity"], "sum"))
 init_state ["investor-order-book"] = initialize_state (Aggregation (["sell-time", "buy-price", "quantity"], "sum"))
 init_state ["position-order-book"] = initialize_state (Aggregation (["sell-time", "buy-price", "quantity"], "sum"))
 init_state ["swing-order-book"] = initialize_state (Aggregation (["sell-time", "buy-price", "quantity"], "sum"))
+init_state ["stim-anti-user-goal-progress"] = initialize_state (0)
 init_state ["stim-token-price-delta"] = initialize_state (0)
 init_state ["change-urgency"] = initialize_state (0)
 init_state ["change-reward-amount"] = initialize_state (0)
@@ -4715,7 +4818,7 @@ init_state ["scam-profits-per-page"] = initialize_state (np.median (range (1, 10
 init_state ["watch-stake-yield"] = initialize_state (0)
 init_state ["stake-yield"] = initialize_state (1.01)
 init_state ["max-stake"] = initialize_state (300)
-init_state ["stim-anti-user-goal-progress"] = initialize_state (0)
+init_state ["stim-user-delta"] = initialize_state (0)
 init_state ["staking-opportunities"] = initialize_state (1)
 init_state ["heuristic-contradictions"] = initialize_state (0.01)
 init_state ["anti-heuristics"] = initialize_state (0)
@@ -4748,7 +4851,7 @@ init_state ["scam-page-successes"] = initialize_state (0)
 init_state ["scam-page-visits"] = initialize_state (0)
 init_state ["resolved-entities"] = initialize_state (0)
 init_state ["grey-area-entities"] = initialize_state (0)
-init_state ["threatslayer-users"] = initialize_state (5000.0)
+init_state ["threatslayer-users"] = initialize_state (37000.0)
 init_state ["browser-users"] = initialize_state (3.0e9)
 init_state ["data-buyer-money"] = initialize_state (3.0e11)
 init_state ["threatslayer-upkeep"] = initialize_state (0)
@@ -4820,6 +4923,7 @@ indicators_and_flows ["hodler-order-book"] = s_update_hodler_order_book
 indicators_and_flows ["investor-order-book"] = s_update_investor_order_book
 indicators_and_flows ["position-order-book"] = s_update_position_order_book
 indicators_and_flows ["swing-order-book"] = s_update_swing_order_book
+indicators_and_flows ["stim-anti-user-goal-progress"] = s_update_stim_anti_user_goal_progress
 indicators_and_flows ["stim-token-price-delta"] = s_update_stim_token_price_delta
 indicators_and_flows ["change-urgency"] = s_update_change_urgency
 indicators_and_flows ["change-reward-amount"] = s_update_change_reward_amount
@@ -4838,7 +4942,7 @@ indicators_and_flows ["scam-profits-per-page"] = s_update_scam_profits_per_page
 indicators_and_flows ["watch-stake-yield"] = s_update_watch_stake_yield
 indicators_and_flows ["stake-yield"] = s_update_stake_yield
 indicators_and_flows ["max-stake"] = s_update_max_stake
-indicators_and_flows ["stim-anti-user-goal-progress"] = s_update_stim_anti_user_goal_progress
+indicators_and_flows ["stim-user-delta"] = s_update_stim_user_delta
 indicators_and_flows ["staking-opportunities"] = s_update_staking_opportunities
 indicators_and_flows ["heuristic-contradictions"] = s_update_heuristic_contradictions
 indicators_and_flows ["anti-heuristics"] = s_update_anti_heuristics
@@ -5040,32 +5144,38 @@ def run_simulation ():
 sim_res = None
 genome_fitness = {}
 genome_pin_fitness = {}
-genome_pin_fitness ["stim-contradiction-rate-change-max-stake"] = 0
-genome_pin_fitness ["stim-contradiction-rate-change-lookup-fee"] = 0
-genome_fitness ["stim-contradiction-rate-change-max-stake"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-anti-user-goal-progress-change-max-stake"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-token-price-delta-change-max-stake"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-contradiction-rate-change-stake-yield"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-anti-user-goal-progress-change-stake-yield"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-token-price-delta-change-stake-yield"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-contradiction-rate-change-lookup-fee"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-anti-user-goal-progress-change-lookup-fee"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-token-price-delta-change-lookup-fee"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-contradiction-rate-change-user-fee"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-anti-user-goal-progress-change-user-fee"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-token-price-delta-change-user-fee"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-contradiction-rate-change-buyback-amount"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-anti-user-goal-progress-change-buyback-amount"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-token-price-delta-change-buyback-amount"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-contradiction-rate-change-sell-amount"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-anti-user-goal-progress-change-sell-amount"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-token-price-delta-change-sell-amount"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-contradiction-rate-change-reward-amount"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-anti-user-goal-progress-change-reward-amount"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-token-price-delta-change-reward-amount"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-contradiction-rate-change-urgency"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-anti-user-goal-progress-change-urgency"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
-genome_fitness ["stim-token-price-delta-change-urgency"] = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1]
+genome_fitness ["stim-contradiction-rate-change-max-stake"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-user-delta-change-max-stake"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-anti-user-goal-progress-change-max-stake"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-token-price-delta-change-max-stake"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-contradiction-rate-change-stake-yield"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-user-delta-change-stake-yield"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-anti-user-goal-progress-change-stake-yield"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-token-price-delta-change-stake-yield"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-contradiction-rate-change-lookup-fee"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-user-delta-change-lookup-fee"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-anti-user-goal-progress-change-lookup-fee"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-token-price-delta-change-lookup-fee"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-contradiction-rate-change-user-fee"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-user-delta-change-user-fee"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-anti-user-goal-progress-change-user-fee"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-token-price-delta-change-user-fee"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-contradiction-rate-change-buyback-amount"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-user-delta-change-buyback-amount"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-anti-user-goal-progress-change-buyback-amount"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-token-price-delta-change-buyback-amount"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-contradiction-rate-change-sell-amount"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-user-delta-change-sell-amount"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-anti-user-goal-progress-change-sell-amount"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-token-price-delta-change-sell-amount"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-contradiction-rate-change-reward-amount"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-user-delta-change-reward-amount"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-anti-user-goal-progress-change-reward-amount"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-token-price-delta-change-reward-amount"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-contradiction-rate-change-urgency"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-user-delta-change-urgency"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-anti-user-goal-progress-change-urgency"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
+genome_fitness ["stim-token-price-delta-change-urgency"] = [-2, -1.66, -1.33, -1, -0.66, -0.33, -1.0e-10, 0, 1.0e-10, 0.33, 0.66, 1, 1.33, 1.66, 2]
 fitness_top_n = []
 fitness_top_n_per_gen = []
 def genome_eq (g1, g2):

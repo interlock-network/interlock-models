@@ -18,7 +18,7 @@ network of Stock-and-Flow diagrams and Causal-Loop diagrams.
 
 # Primary Model
 
-![](./graphs/interlock-graph-1.png)
+![](./graphs/mad-4-full-graph.png)
 
 Here is the primary model of the Interlock Network. It is a lot to take in,
 so we will have to explain what the various aesthetics actually mean. The
@@ -54,6 +54,12 @@ It is very important to not use Causal Loops, where Stocks and Flows would be mo
 Causal Loops simply indicate _causal deltas_, without any implication of directionality. While
 Stocks and Flows have a clear direction, and a finite amount of material to move around. Also
 the Flow-Rates in the Stocks and Flows provide a _non-arbitrary source of delays_.
+
+Here is another rendering of the above graph, but broken up into subgraphs (see [MAD-4](./docs/mads/4-model-visualisation.md) for full
+explanation of prefixes, etc):
+
+![](./graphs/mad-4-subgraphs.png)
+
 
 # Graph Updates
 
